@@ -22,7 +22,7 @@ export default function AcercaDe() {
             <ul id='acercade-nav' className='list-none p-0 m-0 flex flex-col gap-[1.25rem]'>
                 {siteManagement.map((e, index) => (
                     <li key={`${index}-nav`} className={`cursor-pointer px-3 text-center h-6 ${activeIndex === index ? 'active' : ''}`}>
-                        <button onClick={() => handleClickSiteManagementMenu(index)} className={`min-w-[150px] hover:text-orange-500 nav-link relative after:absolute after:w-full after:h-1 after:bg-orange-500 after:bottom-0 after:left-0 after:scale-x-0 hover:after:scale-x-100 after:transition-transform ${activeIndex === index ? 'underline underline-offset-[3.5px] decoration-[3px] decoration-orange-uam' : ''}`}>
+                        <button onClick={() => handleClickSiteManagementMenu(index)} className={`min-w-[150px] hover:text-orange-500 nav-link relative after:absolute after:w-full after:h-1 after:bg-orange-500 after:bottom-0 after:left-0 after:scale-x-0 hover:after:scale-x-100 after:transition-transform ${activeIndex === index ? 'underline underline-offset-[3px] decoration-[3px] decoration-orange-uam' : ''}`}>
                             {e.title}
                         </button>
                     </li>
