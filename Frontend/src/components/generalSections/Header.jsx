@@ -163,7 +163,7 @@ function Header() {
                   key={`section-${index}`}
                   to={`/${e.to}`}
                   onClick={() => setActiveIndex(index)}
-                  className={`min-w-[150px]  w-full hover:text-orange-500 nav-link relative after:absolute after:w-full after:h-1 after:bg-orange-500 after:bottom-0 after:left-0 after:scale-x-0 hover:after:scale-x-100 after:transition-transform ${activeIndex === index ? 'underline underline-offset-[3.5px] decoration-[3px] decoration-orange-uam' : ''}`}
+                  className={`min-w-[150px]  w-full hover:text-orange-500 nav-link relative after:absolute after:w-full after:h-1 after:bg-orange-500 after:bottom-0 after:left-0 after:scale-x-0 hover:after:scale-x-100 after:transition-transform ${activeIndex === index ? 'underline underline-offset-[3px] decoration-[3px] decoration-orange-uam' : ''}`}
                 >            
                   {e.title}
                 </NavLink>
