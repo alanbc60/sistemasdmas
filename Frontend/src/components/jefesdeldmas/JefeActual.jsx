@@ -14,11 +14,11 @@ export default function JefeActual({updateLightboxItem}) {
         updateLightboxItem(item)
     }
     return(
-        <aside id='jefeactual' >
-            <h3 className='jefe-title'>Jefe Actual</h3>
-            <figure id='jefeactual-container-img' className='page-content' >
-                <button className='button container' onClick={()=>handleClick(jefesdeldmas[0])}>
-                    <img id='jefeactual-photo' src={jefesdeldmas[0].imgSrc?jefesdeldmas[0].imgSrc: noImg}/>
+        <aside id='jefeactual' className='flex flex-col items-center'>
+            <h3 id='jefe-title' className='text-2xl mb-8 font-bold text-center'>Jefe Actual</h3>
+            <figure id='jefeactual-container-img' className='page-content relative max-w-[275px] max-h-[275px] bg-gradient-to-br from-orange-400 via-yellow-200 to-yellow-200 rounded-full flex items-center justify-center cursor-pointer bg-opacity-50' >
+                <button className='button container flex justify-center' onClick={()=>handleClick(jefesdeldmas[0])}>
+                    <img id='jefeactual-photo' className='h-[90%] w-[90%] rounded-full aspect-square aspect-[3/2] object-contain hover:scale-110' src={jefesdeldmas[0].imgSrc?jefesdeldmas[0].imgSrc: noImg}/>
                 </button>
             </figure>
             <p id='jefeactual-name'>{jefesdeldmas[0].nombre}</p>
