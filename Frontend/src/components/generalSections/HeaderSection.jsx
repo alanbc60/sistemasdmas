@@ -9,7 +9,7 @@ export default function HeaderSection() {
     const jefesdeldmasColor =
         'bg-jefesheader opacity-70';
     const jefesdmasSVG = 
-        'max-h-[250px] relative w-full h-screen bg-[length:100px_14vh] bg-[position:_center] bg-jefesdeldmas bg-repeat';        
+        'max-h-[250px] relative w-full h-screen bg-[length:100px_100px] bg-[position:_center] bg-jefesdeldmas bg-repeat';        
 
     if (!layoutData) return null;
     const { title, bgHeader, desc } = layoutData;
