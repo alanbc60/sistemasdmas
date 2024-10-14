@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "filtro": "Todas",
+        "type": 0
+    },
+    {
+        "id": 2,
+        "filtro": "Matemáticas Aplicadas",
+        "type": 2
+    },
+    {
+        "id": 3,
+        "filtro": "Ingeniería en Computación",
+        "type": 1
+    },
+    {
+        "id": 4,
+        "filtro": "Otro",
+        "type": 3
+    }
+]

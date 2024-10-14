@@ -1,9 +1,13 @@
-export const type = 'toggleLogin';
+// Necesitarás una acción para actualizar el estado de autenticación en tu Redux store.
 
-const toggleLogin = Boolean => {
+// La acción toggleLogin es útil para manejar el cambio del estado de autenticación en términos de "login" o "logout"
+
+export const TOGGLE_LOGIN = 'TOGGLE_LOGIN';
+
+const toggleLogin = (isLoggedIn) => {
     return {
-        type,
-        payload: Boolean
+        type: TOGGLE_LOGIN,
+        payload: isLoggedIn
     };
 };
 

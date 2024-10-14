@@ -1,9 +1,10 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import {useNavigate} from 'react-router-dom';
 import NoResults from './NoResults';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen , faTrash} from '@fortawesome/free-solid-svg-icons';
-import '../styles/components/Categorias.css'
+// import '../styles/components/Categorias.css'
 import Clamp from 'react-multiline-clamp';
 import { Container, Row } from 'react-bootstrap';
 

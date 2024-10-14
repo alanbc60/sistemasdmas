@@ -21,6 +21,7 @@ function Header() {
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [menuHamburguerOpen, setMenuHamburguerOpen] = useState(false); // Estado para manejar el menú hamburguesa
   const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0)
   const dropdownRef = useRef(null);
 
   const dispatch = useDispatch();
@@ -128,9 +129,9 @@ function Header() {
           </div>
   
           {/* Botón de sesión */}
-          <div className="flex justify-center items-center col-span-1 space-x-4">
+          <div className="flex justify-center items-center col-span-1 space-x-4 hover:text-gray-400 transition-all duration-500">
             <button 
-              className="flex items-center gap-2 hover:text-gray-300 transition-all session-btn"
+              className="flex items-center gap-2"
               onClick={sessionBtn}
             >
               <span>{logged.state ? "Cerrar sesión" : "Iniciar sesión"}</span>
@@ -139,7 +140,7 @@ function Header() {
   
             {/* Botón de administrador */}
             {logged.state && (
-              <button className="flex items-center gap-2 hover:text-gray-300 transition-all session-adm" onClick={adminBtn}>
+              <button className="flex items-center gap-2" onClick={adminBtn}>
                 <span>Administrador</span>
                 <FontAwesomeIcon icon={faUserTie} className="h-6 w-6" />
               </button>
@@ -156,16 +157,15 @@ function Header() {
   
         {/* Menú de navegación */}
         <nav className={`lg:flex justify-center large:py-6 ${menuHamburguerOpen ? 'block' : 'hidden'} lg:block`}>
-          <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 text-gray-700 text-center">
+          <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 text-gray-700 text-center ">
             {sections.slice(0, -1).map((e, index) => (
               index !== 1 ? (
                 <NavLink
-                  className="min-w-[150px] hover:text-orange-500 nav-link relative after:absolute after:w-full 
-                  after:h-0.5 after:bg-orange-500 after:bottom-0 after:left-0 after:scale-x-0 hover:after:scale-x-100 
-                  after:transition-transform"
                   key={`section-${index}`}
                   to={`/${e.to}`}
-                >
+                  onClick={() => setActiveIndex(index)}
+                  className={`min-w-[150px] w-full hover:text-orange-500 relative after:absolute after:w-full after:h-1 after:bg-orange-500 after:bottom-0 after:left-0 after:scale-x-0 hover:after:scale-x-100 after:transition-transform ${activeIndex === index ? 'underline underline-offset-[3px] decoration-[3px] decoration-orange-uam' : ''}`}
+                >            
                   {e.title}
                 </NavLink>
               ) : (
@@ -203,10 +203,5 @@ function Header() {
 
 
 };
-
-
-
-
-
 
 export default Header

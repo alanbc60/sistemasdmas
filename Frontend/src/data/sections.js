@@ -1,8 +1,7 @@
 //Background Section
-import bgHeaderHome from '../assets/backgrounds/bgbanner.jpg';
-import bgHeaderAcerca from '../assets/backgrounds/bgacercade.jpg';
-import bgHeaderQuienes from '../assets/backgrounds/bgquienesomos.jpg';
+// import bgHeaderHome from '../assets/backgrounds/bgbanner.jpg';
 import bgHeaderSugerencias from '../assets/backgrounds/bgsugerencias.jpg';
+
 
 //Background Categorias
 import bgHeaderSeminarios from '../assets/backgrounds/bgseminario.jpg';
@@ -47,20 +46,20 @@ export const sections = [
     {
         id:2,
         title: '¿Quiénes somos?',
-        bgHeader: bgHeaderQuienes,
+        bgHeader: 'bg-quienesomos',
         desc: ['El Departamento de Matemáticas Aplicadas y Sistemas (DMAS) surge en el marco del fomento a la interdisciplina que promueve la Universidad Autónoma Metropolitana Unidad Cuajimalpa (UAM-C) y forma parte de la División de Ciencias Naturales e Ingeniería (DCNI).','El DMAS atiende, actualmente, a la Licenciatura en Ingeniería en Computación y a la Licenciatura en Matemáticas Aplicadas, en las cuales se promueve un modelo educativo centrado en el alumnado, que busca el desarrollo del pensamiento crítico, de la habilidad de aprender a aprender y del trabajo colaborativo.','En el ámbito de la investigación, el DMAS está conformado por un grupo de investigadores expertos en distintas áreas de conocimiento. La investigación en el DMAS gira entorno a la computación, la física y las matemáticas, y a los espacios de convergencia entre estas ciencias.'],
         to: 'quienessomos'
     },
     {
         id:3,
         title: 'Acerca de',
-        bgHeader: bgHeaderAcerca,
+        bgHeader: 'bg-acercade',
         to: 'acercade'
     },
     {
         id:4,
         title: 'Jefes del DMAS',
-        bgHeader: bgHeaderHome,
+        bgHeader: 'bg-jefesdeldmas',
         to: 'jefesdeldmas'
     },
     {

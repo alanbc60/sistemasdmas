@@ -1,5 +1,5 @@
 import vacio from '../assets/icons/empty.png'
-import '../styles/elements/NoResults.css'
+// import '../styles/elements/NoResults.css'
 export default function NoResults() {
   return (
     <article className="no-results">

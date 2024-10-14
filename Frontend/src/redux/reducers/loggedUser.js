@@ -1,7 +1,7 @@
-import {type as toggleLoginType} from '../actions/toggleLogin'
+import { TOGGLE_LOGIN } from '../actions/toggleLogin';
+import { SET_AUTHENTICATED } from '../actions/setAuthenticated';
 
 const defaultState = false;
-
 
 /**
  * Reducer for loggedUser. Handles toggleLogin action type.
@@ -11,15 +11,15 @@ const defaultState = false;
  * @returns {boolean} The next state of the logged user.
  */
 
-function reducer(state = defaultState, {type, payload}){
-    switch(type){
-        case toggleLoginType: 
-            return {
-                state: payload
-            };
-        default: 
-            return state;
-    }
+
+function reducer(state = defaultState, { type, payload }) {
+  switch (type) {
+    case TOGGLE_LOGIN:
+    case SET_AUTHENTICATED:
+      return payload; // Esto actualiza el estado según la autenticación.
+    default:
+      return state;
+  }
 }
 
 export default reducer;

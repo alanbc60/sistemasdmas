@@ -1,38 +1,34 @@
-
+// src/App.jsx
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import {store} from './redux/configureStore';
+import { store } from './redux/configureStore';
 
-// importaciones de rutas
-
-import Home from './pages/Home'
-import JefesDelDmas from './pages/JefesDelDMAS'
-
+// Componentes y páginas
+import GlobalAuth from './components/validations/GlobalAuth';
+import JefesDelDMAS from './pages/JefesDelDMAS';
+import Home from './pages/Home';
+import AcercaDe from './pages/acercade/AcercaDe';
 
 function App() {
 
-  return (
-    <>
-      {/* <Provider store={store}> (Redux): Se utiliza para envolver la aplicación y proporcionar acceso al estado global 
+        {/* <Provider store={store}> (Redux): Se utiliza para envolver la aplicación y proporcionar acceso al estado global 
         de la aplicación, administrado por Redux. Todos los componentes que están dentro del Provider pueden acceder al 
         estado global y despachar acciones. */}
 
-      <Provider store={store}>
-        <Router>
+  return (
+    <Provider store={store}>
+      <Router>
+        {/* GlobalAuth maneja la validación global de autenticación */}
+        <GlobalAuth>
           <Routes>
-        
             <Route path="/" element={<Home />} />
-            <Route path="/jefesdeldmas" element={<JefesDelDmas />} />
-
+            <Route path="/jefesdeldmas" element={<JefesDelDMAS />} />
+            <Route path='/acercade' element={<AcercaDe />} />
           </Routes>
-          </Router>
-
-        </Provider>
-
-
-
-    </>
-  )
+        </GlobalAuth>
+      </Router>
+    </Provider>
+  );
 }
 
-export default App
+export default App;

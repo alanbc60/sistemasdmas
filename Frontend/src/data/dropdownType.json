@@ -1,0 +1,26 @@
+[
+    {
+        "id":2,
+        "filtro": "Artículos en Revista", 
+        "type": 1
+    },
+    {
+        "id": 3,
+        "filtro": "Memoria en extenso",
+        "type": 2
+    },
+    {
+        "id": 4,
+        "filtro": "Libro",
+        "type": 3
+    },{
+        "id": 5,
+        "filtro": "Capítulo de Libro",
+        "type": 4
+    },
+    {
+        "id": 6,
+        "filtro": "Paquete Computacional",
+        "type": 5
+    }
+]

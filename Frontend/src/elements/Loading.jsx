@@ -1,11 +1,13 @@
 // import '../styles/elements/Loading.css'
 //import {ReactComponent as Spinner} from '../assets/others/spinner.svg';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 
 export function Loading() {
   return (
+    
     <div className="flex flex-col items-center justify-center my-10" id="loading-logo">
       <h6>Espera mientras terminamos...</h6>
       <div className="relative origin-[14em_14em] animate-[rotate_5s_-1s_infinite] w-[30em] h-[25em] mx-auto scale-50" id="loadingContainer">

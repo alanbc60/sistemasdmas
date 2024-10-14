@@ -1,0 +1,10 @@
+[
+    {
+        "id": 1,
+        "filtro": "Más reciente primero"
+    },
+    {
+        "id": 2,
+        "filtro": "Más antiguo primero"
+    }
+]
