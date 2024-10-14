@@ -7,7 +7,7 @@ import { store } from './redux/configureStore';
 import GlobalAuth from './components/validations/GlobalAuth';
 import JefesDelDMAS from './pages/JefesDelDMAS';
 import Home from './pages/Home';
-import AcercaDe from './pages/acercade/AcercaDe';
+import AcercaDe from './pages/AcercaDe';
 
 function App() {
 
