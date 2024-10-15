@@ -1,10 +1,11 @@
 // src/services/authService.js
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { host } from '../../data/host';
 
 export const validateUser = async () => {
   try {
-    const response = await axios.get('http://localhost:3001/get/login', { withCredentials: true });
+    const response = await axios.get(host + ':3001/get/login', { withCredentials: true });
     return response.data.loggedIn; // Retorna el estado de autenticación
   } catch (error) {
     Swal.fire({
