@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import Formulario from '../../../components/Admin/Formulario';
-import Error from '../../../components/Admin/Error'
-import { agregarUsuario } from '../../../hooks/useAdmin';
+import Formulario from '../../components/AdminSections/Formulario';
+import Error from '../../components/AdminSections/Error'
+import { agregarUsuario } from '../../hooks/useAdmin';
 import validator from 'validator';
 import { useState } from 'react';
-import toggleLogin from '../../../redux/actions/toggleLogin';
+import toggleLogin from '../../redux/actions/toggleLogin';
 import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 

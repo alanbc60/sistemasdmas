@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router-dom';
-import Formulario from '../../../components/Admin/Formulario';
-import Error from '../../../components/Admin/Error'
+import Formulario from '../../components/Admin/Formulario';
+import Error from '../../components/Admin/Error'
 import validator from 'validator';
 import { useState, useEffect } from 'react';
-import { actualizarUsuario, obtenerUsuario } from '../../../hooks/useAdmin';
+import { actualizarUsuario, obtenerUsuario } from '../../hooks/useAdmin';
 import { useParams } from 'react-router-dom';
 
 import { toast } from 'react-toastify';
 
-import toggleLogin from '../../../redux/actions/toggleLogin';
+import toggleLogin from '../../redux/actions/toggleLogin';
 import { connect } from 'react-redux';
 import Swal from 'sweetalert2';
 

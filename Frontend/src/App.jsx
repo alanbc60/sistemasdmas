@@ -15,7 +15,7 @@ import ProtectedRoute from './components/validations/ProtectedRoute';
 import EditarSeminario from './pages/categories/EditarSeminario';
 import EditarEvento from './pages/categories/EditarEvento';
 import EditarLineamientoProc from './pages/categories/EditarLineamientoProc';
-import EditarProyectoInvestigacion from 'EditarProyectoInvestigacion';
+import EditarProyectoInvestigacion from './pages/categories/EditarProyectoInvestigacion';
 import EditarProyectoTerminal from './pages/categories/EditarProyectoTerminal';
 import EditarPublicacion from './pages/categories/EditarPublicacion';
 

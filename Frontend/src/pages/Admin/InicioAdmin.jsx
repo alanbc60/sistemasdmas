@@ -1,14 +1,12 @@
 // import React from 'react';
 import { Outlet, Link, useLocation } from "react-router-dom"
-import toggleLogin from '../../../redux/actions/toggleLogin';
+import toggleLogin from '../../redux/actions/toggleLogin';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleLeft } from '@fortawesome/free-regular-svg-icons';
 import { faUsersGear , faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import  LogoUAM  from '../../../assets/logos/uamLogo.png';
-import  LogoUsuario  from '../../../assets/logos/perfil.png';
-import '../../../styles/elements/Footer.css'
-
+import  LogoUAM  from '../../assets/logos/uamLogo.png';
+import  LogoUsuario  from '../../assets/logos/perfil.png';
 
 function InicioAdmin() {
   const location = useLocation();
@@ -55,12 +53,7 @@ function InicioAdmin() {
         {/* cuando el usuario va a "/usuarios/nuevoUsuario", se renderizará el componente asociado con esa ruta dentro del Outlet. */}
         <Outlet />
       </main>
-
-      
-
     </div>
-
-    
   )
 }
 

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import Usuario from '../../Admin/Usuario';
-import { AdminLoader } from '../../../hooks/useAdmin';
+import Usuario from '../../components/AdminSections/Usuario';
+import { AdminLoader } from '../../hooks/useAdmin';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import toggleLogin from '../../../redux/actions/toggleLogin';
-import { host } from '../../../data/host';
+import toggleLogin from '../../redux/actions/toggleLogin';
+import { host } from '../../data/host';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
