@@ -14,9 +14,7 @@ import { host } from '../../data/host';
  * login, de otra forma se carga las rutas hijo
  */
 
-function ProtectedRoute() {
-
-    const { logged, toggleLogin } = props;
+function ProtectedRoute(props) {
     useEffect( ()=>{
       console.log("Validando Permisos");
         try {
@@ -26,8 +24,9 @@ function ProtectedRoute() {
             //console.log(response.data.loggedIn);
             //const result = response.data.loggedIn;
             //props.toggleLogin(result);
-            toggleLogin(response);
+            props.toggleLogin(response);
             console.log("la respuesta de la validacion es: ");
+            console.log(props.logged.state);
           }
           getLogin();
 
@@ -35,7 +34,9 @@ function ProtectedRoute() {
           console.log(error.message)
         }
       }, [])
-    if(!logged.state){
+      console.log("protected route");
+      console.log(props.logged.state);
+    if(!props.logged.state){
         return <Navigate to='/login'/>
     }
     return (
