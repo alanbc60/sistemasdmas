@@ -7,6 +7,7 @@ import AcercaDe from "../../pages/acercade/AcercaDe";
 import JefesDelDMAS from "../../pages/jefesdeldmas/JefesDelDMAS";
 import Sugerencias from "../../pages/sugerencias/Sugerencias";
 import CategoriasBody from './CategoriasBody';
+import QuienesSomos from '../../pages/quienesSomos';
 
 /**
  * 
@@ -21,7 +22,7 @@ function SelectorBody(props) {
             {section === 'acercade' ? <AcercaDe /> :
                 section === 'jefesdeldmas' ? <JefesDelDMAS /> :
                     section === 'sugerencias' ? <Sugerencias /> :
-                        section === 'quienessomos' ? <></> :
+                        section === 'quienessomos' ? <QuienesSomos/> :
                             // Categorias provenientes de useParams
                             <CategoriasBody categoria={section} loginState={props.logged.state} />
             }
