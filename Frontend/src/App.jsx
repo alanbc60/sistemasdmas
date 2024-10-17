@@ -1,4 +1,6 @@
 // src/App.jsx
+// eslint-disable-next-line no-unused-vars
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './redux/configureStore';
@@ -8,6 +10,7 @@ import GlobalAuth from './components/validations/GlobalAuth';
 import JefesDelDMAS from './pages/JefesDelDMAS';
 import Home from './pages/Home';
 import AcercaDe from './pages/AcercaDe';
+import QuinesSomos from './pages/quienesSomos';
 
 
 // rutas protegidas
@@ -20,10 +23,11 @@ import EditarProyectoTerminal from './pages/categories/EditarProyectoTerminal';
 import EditarPublicacion from './pages/categories/EditarPublicacion';
 
 // rutas admin
-import InicioAdmin from './pages/admin/InicioAdmin';
-import CrudAdmin from './pages/admin/CrudAdmin';
-import NuevoUsuario from './pages/admin/NuevoUsuario';
-import EditarUsuario from './pages/admin/EditarUsuario';
+import Login from './pages/Login';
+import InicioAdmin from './pages/admin/inicioAdmin';
+import CrudAdmin from './pages/admin/crudAdmin';
+import NuevoUsuario from './pages/admin/nuevoUsuario';
+import EditarUsuario from './pages/admin/editarUsuario';
 
 
 
@@ -42,9 +46,20 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/jefesdeldmas" element={<JefesDelDMAS />} />
             <Route path='/acercade' element={<AcercaDe />} />
+            <Route path='/quienessomos' element={<QuinesSomos />} />
+
+            {/* rutas de secciones */}
+            <Route path='/seminarios' element={<Home />} />
+            <Route path='/' element={<Home />} />
+            <Route path='/' element={<Home />} />
+            <Route path='/' element={<Home />} />
+            <Route path='/' element={<Home />} />
+            <Route path='/' element={<Home />} />
 
 
             {/* ruteo */}
+
+            <Route exact path='/login' element={<Login/>}/> 
 
             <Route element={<ProtectedRoute/>}>  
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { faFacebook, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import LogoUAM from '../../assets/logos/uamLogo.png';
+import LogoUAM from '../../assets/logos/uamlogo.png';
 
 function Footer() {
     return (

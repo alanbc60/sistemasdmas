@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import Formulario from '../../components/Admin/Formulario';
-import Error from '../../components/Admin/Error'
+import Formulario from '../../components/adminSections/Formulario';
+import Error from '../../components/adminSections/Error'
 import validator from 'validator';
 import { useState, useEffect } from 'react';
 import { actualizarUsuario, obtenerUsuario } from '../../hooks/useAdmin';

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Usuario from '../../components/AdminSections/Usuario';
+import Usuario from '../../components/adminSections/Usuario';
 import { AdminLoader } from '../../hooks/useAdmin';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';

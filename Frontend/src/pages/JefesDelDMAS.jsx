@@ -3,7 +3,7 @@ import React from 'react'
 import { useState } from "react"
 import JefeActual from "../components/jefesdeldmas/JefeActual"
 import JefesAnteriores from "../components/jefesdeldmas/JefesAnteriores"
-import { LightboxJefe } from "../elements/Lightbox"
+import { LightboxImagen } from "../elements/Lightbox"
 import Header from '../components/generalSections/Header'
 import HeaderSection from '../components/generalSections/HeaderSection'
 import Footer from '../components/generalSections/Footer'
@@ -24,7 +24,7 @@ export default function JefesDelDMAS() {
         <div id="jefesdmas-conteiner" className='flex justify-center flex-wrap gap-[10%] mb-[16px] '>
             <JefeActual updateLightboxItem={updateLightboxItem}/>
             <JefesAnteriores updateLightboxItem={updateLightboxItem}/>
-            <LightboxJefe updateState={updateLightboxItem} lightboxItem={lightboxItem}/>
+            <LightboxImagen updateState={updateLightboxItem} lightboxItem={lightboxItem}/>
         </div>
         <Footer/>
 

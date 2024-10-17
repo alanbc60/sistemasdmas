@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleLeft } from '@fortawesome/free-regular-svg-icons';
 import { faUsersGear , faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import  LogoUAM  from '../../assets/logos/uamLogo.png';
+import  LogoUAM  from '../../assets/logos/uamlogo.png';
 import  LogoUsuario  from '../../assets/logos/perfil.png';
 
 function InicioAdmin() {

@@ -61,14 +61,24 @@ app.use(
 const poolDB = mysql.createPool({
     waitForConnections: true, // La solicitud espera en una cola hasta que una conexión se libere
     connectionLimit: 10, // El limite de conexiones simultaneas
-    host: "148.206.111.111",
+    host: "148.206.168.33",
     user: "adminUser",
-    password: "admin123",
+    password: "X22muy2Dqw,q",
     database: "dmas",
     port: "3306"
 })
 
-console.log('Conexión establecida exitosamente');
+// Probar la conexión
+poolDB.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return;
+    }
+    console.log('Conexión exitosa a la base de datos');
+    connection.release(); // Libera la conexión
+});
+
+
 
 // Inicia el servidor
 const PORT = 3001;
