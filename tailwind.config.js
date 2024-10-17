@@ -7,18 +7,22 @@ export default {
         'body-uam-img': "url('./Frontend/src/assets/backgrounds/bgbanner.jpg')",
         'body-footer-img': "url('./Frontend/src/assets/backgrounds/bgbanner2.jpg')",
         'acercade': "url('./Frontend/src/assets/backgrounds/bgacercade.jpg')",
-        'quienessomos': "url('./Frontend/src/assets/backgrounds/bgquienesomos.jpg')",
+        'quienesomos': "url('./Frontend/src/assets/backgrounds/bgquienesomos.jpg')",
         'jefesdeldmas': "url('./Frontend/src/assets/backgrounds/bgjefes.png')"
       },
       colors: {
         'orange-uam': '#F08200',
         'jefesheader':'#ffe284'
+        // submitBtn: 'var(--submit-btn)',
       },
       screens: {
         'large': '992px',
         'jefes-space': '850px',
       },
+
     },
   },
   plugins: [],
+
 }
+
