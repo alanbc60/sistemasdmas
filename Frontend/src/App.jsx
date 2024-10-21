@@ -36,7 +36,7 @@ import EditarPublicacion from './pages/categories/protected/EditarPublicacion';
 // rutas admin
 import Login from './pages/Login';
 import InicioAdmin from './pages/admin/inicioAdmin';
-import CrudAdmin from './pages/admin/crudAdmin';
+import CrudAdmin from './components/adminSections/crudAdmin';
 import NuevoUsuario from './pages/admin/nuevoUsuario';
 import EditarUsuario from './pages/admin/editarUsuario';
 

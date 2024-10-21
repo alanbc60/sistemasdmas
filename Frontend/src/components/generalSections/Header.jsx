@@ -32,6 +32,7 @@ function Header() {
 
   // Acceder al estado global del usuario logueado
   const logged = useSelector((state) => state.logged); // Accede al reducer 'logged'
+  console.log("Estado del usuario: ", logged.state)
 
   axios.defaults.withCredentials = true;
 
@@ -55,7 +56,7 @@ function Header() {
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, location.pathname]);
 
   const handleClickCategories = () => {
     setIsOpen(!isOpen);
@@ -93,7 +94,6 @@ function Header() {
             setLogoutLoading(true)
             const getLogout = async () => {
               const response = await axios.post(host + ":3001/post/logout")
-
 
               const result = response.data
               console.log(result)
@@ -173,7 +173,6 @@ function Header() {
             {sections.slice(0, -1).map((e, index) => (
               
               index !== 1 ? (
-                console.log(e.title),
                 <NavLink
                   key={`section-${index}`}
                   to={`/${e.to}`}

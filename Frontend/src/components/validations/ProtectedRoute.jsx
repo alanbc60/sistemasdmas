@@ -31,7 +31,7 @@ function ProtectedRoute({logged, toggleLogin}) {
         } catch (error) {
           console.log(error.message)
         }
-      }, [])
+      }, [toggleLogin])
     if(!loggedState){
         return <Navigate to='/login'/>
     }

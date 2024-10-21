@@ -15,14 +15,14 @@ export default function HeaderSection({ layoutData }) {
     const jefesdmasSVG = 
         'max-h-[250px] relative w-full h-screen bg-[length:100px_100px] bg-[position:_center] bg-jefesdeldmas bg-repeat';     
     useEffect(() => {
-        console.log("Nuevo layoutData:", layoutData);
+        // console.log("Nuevo layoutData:", layoutData);
     }, [layoutData]); // Se ejecuta cada vez que layoutData cambia
 
     if (!layoutData) return <p>Cargando...</p>;
 
     const { title, bgHeader, desc } = layoutData || {};
-    console.log("El title es:", title);
-    console.log("El bgHeader es:", bgHeader);
+    // console.log("El title es:", title);
+    // console.log("El bgHeader es:", bgHeader);
 
     
 
