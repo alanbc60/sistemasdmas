@@ -1,0 +1,71 @@
+#enlaces-logo{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+    align-items: center;
+    padding: 1.875rem var(--main-space);
+    background-color: var(--uam-color);
+}
+#enlaces-footer{
+    display: flex;
+    justify-content: center;
+}
+#enlaces-footer-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .5rem;
+}
+#enlaces-footer-container h5 {
+    font-size: var(--depto-size);
+}
+#enlaces-footer-container>h5,#enlaces-footer-container>p{
+    color: var(--white);
+    font-weight: normal;
+    margin: 0;
+}
+#enlaces-list{
+    list-style-type: none;
+    padding-left: .5rem;
+    display: grid;
+    gap: .25rem;
+    margin: 0;
+}
+#enlaces-list>li>a{
+    text-decoration: none;
+    color: var(--white);
+    display: inline-block;
+    transition: all 0.25s;
+}
+#enlaces-list>li>a:hover{
+    color: var(--hover-text)
+}
+#enlaces-list>li>a>svg{
+    margin-right: .3125rem;
+    transition: all 0.25s;
+}
+#enlaces-list>li>a:hover svg{
+    fill: var(--hover-text);
+}
+#logo-footer{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.logo-uam{
+    height: 5.375rem;
+    width: auto;
+    overflow: hidden;
+}
+#label-footer{
+    background-color: #b36200;
+    height: 2.5rem;
+    color: var(--uam-color);
+    line-height: 2.5rem;
+    text-align: center;
+}
+
+@media (max-width: 32.8125rem){
+    #logo-footer{
+        margin-top: 1.875rem;
+    }
+}

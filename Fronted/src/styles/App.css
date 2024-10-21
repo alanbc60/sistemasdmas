@@ -1,0 +1,32 @@
+@import 'tailwindcss/base'; 
+@import 'tailwindcss/components'; 
+@import 'tailwindcss/utilities';
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root{
+    --uam-color: #F08200;
+    --uam-color-light: hsl(33, 100%, 67%);
+    /* --uam-color-mid: hsl(33, 100%, 57%); */
+    --uam-color-mid:#F05757;
+    --submit-btn: #00C3DB;
+    --link-btn:#C3FCF1;
+    --white: #fff;
+    --black: #000;
+    --hover-text: #888888;
+    --main-space: 3.75rem;
+    --depto-size: 20px;
+}
+#root{
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+::selection{
+    background-color: var(--uam-color-light);          
+}

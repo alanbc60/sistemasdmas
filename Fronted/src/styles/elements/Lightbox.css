@@ -1,0 +1,95 @@
+.popup-jefe,.popup-img{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.8);
+  width: 100%;
+  height: 100%;
+}
+.popup-jefe article{
+  position: absolute;
+  padding: 3.125rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+  border-radius: .75rem;
+  border: 3px solid var(--uam-color-light);
+  color: var(--white);
+  overflow-y: scroll;
+  scrollbar-width: thin; /* Ancho del scrollbar */
+  scrollbar-color: var(--uam-color-light) var(--white); /* Color del thumb y del track */
+  margin: 3.125rem 0;
+}
+
+.close-icon {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-icon:hover {
+  color: rgb(99, 99, 99); /* Change the color on hover */
+}
+
+.popup-img figure{
+    position: absolute;
+    padding: 3.125rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    width: 95%;
+    height: 95%;
+    text-align: center;
+    border-radius: .75rem;
+    border: 3px solid var(--uam-color-light);
+    color: var(--white);
+  }
+  .popup-img > figure img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    aspect-ratio: 3/2;
+  }
+
+/* Scrollbar */
+/* Estilo del scrollbar */
+.popup-jefe article::-webkit-scrollbar {
+  width: 10px; /* Ancho del scrollbar */
+}
+
+/* Estilo del thumb (el "botón" del scrollbar) */
+.popup-jefe article::-webkit-scrollbar-thumb {
+  background-color: var(--uam-color-light); /* Color del thumb */
+  border-radius: 5px; /* Bordes redondeados del thumb */
+}
+
+/* Estilo del track (la "pista" del scrollbar) */
+.popup-jefe article::-webkit-scrollbar-track {
+  background-color: var(--white); /* Color de fondo del track */
+}
+
+/*  */
+.popup-jefe>article img{
+ border-radius: .75rem;
+ margin: .75rem 0;
+ width: 90%;
+ max-width: 400px;
+}
+.popup-jefe svg, .popup-img svg{
+  width: 40px;
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 100;
+  cursor: pointer;
+  fill: var(--uam-color-light);
+  user-select: none;
+}
+.popup-jefe svg:hover, .popup-img svg:hover{
+  fill: var(--uam-color);
+}

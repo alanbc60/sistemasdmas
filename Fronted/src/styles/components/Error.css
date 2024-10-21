@@ -1,0 +1,304 @@
+#error-page{
+    background-color: #000;
+    min-height: 100vh;
+    width: 100%;
+}
+
+#error-page>header{
+    display: grid;
+    place-items: center;
+    margin-top: 3.125rem;
+    color: var(--uam-color);
+}
+
+.robot {
+    box-sizing: border-box;
+    position: absolute;
+    width: calc(160px * 3);
+    height: calc(180px * 3);
+    bottom: 0;
+    left: calc(50% - 80px);
+}
+
+.head {
+    position: absolute;
+    width: 100%;
+    height: calc(100px * 3);
+    border-radius: 6px;
+    overflow: hidden;
+    background: rgb(233,226,226);
+    background: linear-gradient(90deg, rgba(233,226,226,1) 0%, rgba(219,209,244,1) 27%, rgba(73,73,93,1) 51%, rgba(134,136,149,1) 78%, rgba(232,236,237,1) 100%);
+    transform-origin: 50% 100%;
+    animation: bob 8000ms ease-in-out alternate infinite -1000ms;
+}
+
+.eyes {
+    position: absolute;
+    top: calc(25% - 10px);
+    right: 45px;/*15 mas*/
+    left: 45px;/*15 mas*/
+    height: calc(20px * 3);
+    animation: blink 10000ms linear forwards infinite;
+}
+
+.eyeball {
+    position: absolute;
+    width: calc(36px * 3); /*Por tres*/
+    height: calc(40px * 3);/*Por dos*/
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background-color: black;
+}
+
+.eyeball_left {
+    left: 0;
+    transition: transform 100ms ease-in-out;
+}
+
+.eyeball_right {
+    right: 0;
+    transition: transform 100ms ease-in-out;
+}
+
+.eye-pupil{
+    position: absolute;
+    background: white;
+    width: 20%;
+    height: 30%;
+    border-radius: 50%;
+    top: 25%;
+    animation: look-around 4s infinite;
+    right: 30%;
+}
+.mouth {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    width: 95%;
+    height: calc(20px * 4);
+    background-color: black;
+    overflow: hidden;
+    border-radius: 50% 50% 0 0;
+}
+
+.mouth-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.mouth-container svg{
+    width: 100%;
+    height: 50px;
+}
+/* .mouth-container-line {
+    position: absolute;
+    top: 50%;
+    height: calc(2px * 3);
+    background-color: var(--uam-color);
+    width: 100%;
+    margin-top: -1px;
+} */
+.mouth-container-line {
+    width:100%;
+	position:absolute;
+    top: 0;
+	height: 100%;
+	background: url('../../assets//others/wave.svg') repeat-x 0%;
+	background-size: contain;
+	animation: 5s wave linear infinite, 1s rotate-horizontal-center infinite;
+	box-shadow:inner 0 0 1rem rgba(red,1);
+}
+@keyframes rotate-horizontal-center{0%{transform:translateY(0)}100%{transform:translateY(25px)}}
+
+@keyframes wave {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 300px 0;
+	}
+}
+.mouth-container-line::before{
+    content:"";
+		background:linear-gradient(90deg, rgba(white,0) 25%, rgba(white,1) 75%);
+		height:100%;
+		width:100%;
+		@include absolute(0,0);
+}
+.torso {
+    position: absolute;
+    bottom: 0;
+    left: calc(50% - calc(40px * 3));
+    width: 50%;
+    height: calc(60px * 3);
+    border-radius: 6px 6px 0 0;
+    background: rgb(233,226,226);
+    background: linear-gradient(90deg, rgba(233,226,226,1) 0%, rgba(73,73,93,1) 33%, rgba(232,236,237,1) 100%);
+}
+
+.torso svg{
+    fill: var(--uam-color);
+    width: calc(100% - 100px);
+    top: 25%;
+    right: 5%;
+    position: absolute;
+}
+
+.neck {
+    position: absolute;
+    bottom: calc(45px * 3);
+    left: calc(50% - calc(15px * 3));
+    width: 18%;
+    height: calc(50px * 3);
+    border-radius: 15px;
+    background: rgb(233,226,226);
+    background: linear-gradient(90deg, rgba(233,226,226,1) 0%, rgba(73,73,93,1) 33%, rgba(232,236,237,1) 100%);
+}
+
+.arms {
+    position: absolute;
+    bottom: 0;
+    left: calc(30px * 3);
+    right: calc(30px * 3);
+    height: calc(50px * 3);
+}
+
+.arm {
+    position: absolute;
+    top: 0;
+    width: 15%;
+    height: calc(50px * 3);
+    border-radius: 10px 10px 0 0;
+    background: rgb(255,255,255);
+    background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(108,104,104,1) 20%, rgba(255,255,255,1) 40%, rgba(133,129,129,1) 60%, rgba(255,254,254,1) 80%, rgba(147,141,141,1) 100%);
+}
+
+.arm_left {
+    left: 0;
+}
+
+.arm_right {
+    right: 0;
+}
+
+
+@keyframes bob {
+    0% {
+        transform: rotate(-3deg);
+    }
+    40% {
+        transform: rotate(-3deg);
+        animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    }
+    60% {
+        transform: rotate(3deg);
+    }
+    100% {
+        transform: rotate(3deg);
+    }
+}
+
+@keyframes blink {
+    50% {
+        transform: scale(1,1);
+    }
+    51% {
+        transform: scale(1,0.1);
+    }
+    52% {
+        transform: scale(1,1);
+    }
+}
+
+@keyframes look-around {
+    0% { transform: translate(0) }
+    5% { transform: translate(50%, -25%) }
+    10% { transform: translate(50%, -25%) }
+    15% { transform: translate(-100%, -25%) }
+    20% { transform: translate(-100%, -25%) }
+    25% { transform: translate(0, 0) }
+    100% { transform: translate(0, 0) }
+  }
+
+@media (max-width: 880px){
+    .robot {
+        width: calc(160px * 2);
+        height: calc(180px * 2);
+    }
+    .head {
+        height: calc(100px * 2);
+    }
+    .eyes {
+        height: calc(20px * 2);
+    }
+    .eyeball {
+        width: calc(36px * 2);
+        height: calc(40px * 2);
+    }
+    .mouth {
+        height: calc(20px * 3);
+    }
+    .torso {
+        left: calc(50% - calc(40px * 2));
+        height: calc(60px * 2);
+    }
+    .neck {
+        bottom: calc(45px * 2);
+        left: calc(50% - calc(15px * 2));
+        height: calc(50px * 2);
+    }
+    .arms {
+        left: calc(30px * 2);
+        right: calc(30px * 2);
+        height: calc(50px * 2);
+    }
+    .arm {
+        height: calc(50px * 2);
+    }
+}
+
+@media (width <= 550px ){
+    .robot {
+        width: 160px;
+        height: 180px;
+    }
+    .head {
+        height: 100px;
+    }
+    .eyes {
+        height: 20px;
+        right: 30px;
+        left: 30px;
+    }
+    .eyeball {
+        width: 36px;
+        height: 40px;
+    }
+    .mouth {
+        height: 30px;
+    }
+    .torso {
+        left: calc(50% - 40px);
+        height: 60px;
+    }
+    .neck {
+        bottom: 45px;
+        left: calc(50% - 15px);
+        height: 50px;
+    }
+    .arms {
+        left: 30px;
+        right: 30px;
+        height: 50px;
+    }
+    .arm {
+        height: 50px;
+    }
+}
+
+@media (width <= 200px ){
+    .robot{
+        scale: 0.5;
+    }
+}

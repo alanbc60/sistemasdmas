@@ -1,0 +1,114 @@
+#loading-logo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 40px 0;
+}
+
+#loadingContainer{
+    position: relative;
+    transform-origin: 14em 14em;
+    animation: rotate 5s -1s infinite;
+    width: 30em;
+    height: 25em;
+    margin: 0 auto;
+    transform: scale(0.5);
+}
+
+.tri{
+    position: absolute;
+    border: 0 solid transparent;
+    border-color: transparent #DFA67B #DFA67B transparent;
+    border-width: 3em 4em 3em 4em;
+    width: 0;
+    height: 0;
+    transform: translate(10em, 10em);
+}
+
+.square1{
+    position: absolute;
+    top: 0;
+    width: 8em;
+    height: 8em;
+    background: #FFF2CC;
+    transform: translate(10em, 16em) rotate(180deg);
+    animation: fill1 5s infinite;
+}
+
+.square2{
+    position: absolute;
+    width: 6em;
+    height: 6em;
+    background: #FFD966;
+    transform: translate(18em, 10em) rotate(90deg);
+    animation: fill2 5s infinite;
+}
+
+.square3{
+    position: absolute;
+    width: 10em;
+    height: 10em;
+    background: #F4B183;
+    transform: translate(6em, 4em) rotate(323deg);
+    animation: fill3 5s infinite;
+    background-image: url('../../assets/logos/uamlogo.svg');
+    background-size: 50%;
+    background-position: 50%;
+    background-repeat: no-repeat;
+
+}
+
+@keyframes rotate {
+    0%, 10% {transform: rotate(217deg);}
+    50%, 60% {transform: rotate(397deg);}
+    100% {transform: rotate(577deg);}
+  }
+@keyframes fill1 {
+    0%, 100% {box-shadow: inset 0 8em 2px  rgba(255,255,255,0.5);}
+    50% {box-shadow: inset 0 0 2px  rgba(255,255,255,0.5);}
+}
+@keyframes fill2 {
+    0%, 100% {box-shadow: inset 0 6em 2px rgba(255,255,255,0.5);}
+    50% {box-shadow: inset 0 0 2px rgba(255,255,255,0.5);}
+}
+@keyframes fill3 {
+    0%, 100% {box-shadow: inset 0 0 2px rgba(255,255,255,0.5);}
+    50% {box-shadow: inset 0 10em 2px rgba(255,255,255,0.5);}
+}
+
+/* Spinner */
+.spinnerContainer{
+    position: relative;
+    height: 25px;
+    width: 25px;
+}
+.spinner {
+    z-index: 2;
+    position: absolute;
+    left: 0;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+}
+
+.spinner .path {
+    stroke: gray;
+    stroke-linecap: round;
+    -webkit-animation: dash 1.1s ease-in-out infinite;
+    animation: dash 1.1s ease-in-out infinite;
+}
+@keyframes dash {
+    0% {
+        stroke-dasharray: 1, 160;
+        stroke-dashoffset: 0;
+   }
+    50% {
+        stroke-dasharray: 80, 160;
+        stroke-dashoffset: -32;
+   }
+    100% {
+        stroke-dasharray: 80, 160;
+        stroke-dashoffset: -124;
+   }
+}

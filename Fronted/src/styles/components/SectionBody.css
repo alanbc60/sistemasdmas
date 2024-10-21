@@ -1,0 +1,296 @@
+#section-body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Inicio */
+#inicio-grid{
+    padding: 0;
+    margin: 3.75rem 0;
+    width: clamp(200px, 100%, 1200px);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    justify-items: center;
+    gap: 1.75rem;
+}
+
+/* Inicio Grid Item */
+
+.inicio-grid-container{
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    overflow-wrap: break-word;
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 1.25rem;
+    box-shadow: rgba(17, 17, 26, 0.1) 0rem 0rem 1rem;
+    padding: 1.5rem 0;
+}
+
+.inicio-grid-link{
+    text-decoration: none;
+    max-width: 400px;
+    width: 100%;
+    min-height: 180px;
+}
+.inicio-grid-container:hover{
+    box-shadow: rgba(17, 17, 26, 0.2) 0rem 0rem 1rem;
+}
+
+.inicio-grid-figure{
+    width: clamp(3.125rem, 100%, 6.25rem);
+    height: clamp(3.125rem, 100%, 6.25rem);    
+    margin: 0;
+}
+.inicio-grid-img{
+    width: 100%;
+    overflow: hidden;
+}
+
+.inicio-grid-title{
+    color: var(--black);
+    margin: 0;
+    width: 100%;
+    text-align: left;
+    font-weight: 500;
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+@media(max-width: 440px){
+    #inicio-grid{
+        grid-template-columns: none;
+        width: auto;
+    }
+    .inicio-grid-container{
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .inicio-grid-title{
+        font-size: 1rem;
+        margin-top: 1rem;
+        text-align: center;
+    }
+    .inicio-grid-link{
+        width: 200px;
+    }
+}
+
+/* Acerca De */
+#acercade-conteiner{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 5vw;
+    padding-bottom: 1.75rem;
+}
+#acercade-nav{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+.acercade-nav-btn{
+    cursor: pointer;
+    padding: 0 .625rem;
+    text-align: center;
+    height: 1.875rem;    
+}
+.acercade-nav-btn button{
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    height: auto;
+}
+.acercade-nav-btn.active{
+    border-bottom: 3px solid var(--uam-color);
+}
+.acercade-nav-btn:hover{
+    border-bottom: .1875rem dashed #FCB77C;
+}
+#acercade-members{
+    list-style-type: none;
+    padding: 1.25rem 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .625rem;
+    border: .125rem dashed var(--uam-color);
+    border-left: none;
+    border-right: none;
+}
+.acercade-member{
+    text-align: center;
+}
+
+/* Jefes del DMAS */
+#jefesdmas-conteiner{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10vw;
+    margin-bottom: 1.75rem;
+}
+
+#jefeactual{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.jefe-title{
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+#jefeactual-container-img button{
+    background-color: transparent;
+    border-radius: 50%;
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+#jefeactual-container-img{
+    background: radial-gradient(circle farthest-corner at 10% 20%, rgba(255,200,124,1) 0%, rgba(252,251,121,1) 90%);
+    width: 17.1875rem;
+    height: 17.1875rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+#jefeactual-photo{
+    height: 90%;
+    width: 90%;
+    border-radius: 50%;
+    aspect-ratio: 3/2;
+    object-fit: contain;
+}
+#jefeactual-container-img:hover img{
+    transform: scale(1.05);
+}
+
+/* Jefes anteriores */
+
+#jefes-anteriores-content{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.columna{
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* Jefe Item */
+
+.jefe-item-info{
+    display: flex;
+    flex-direction: row;
+}
+.jefe-item-container:nth-of-type(1)>.jefe-item-info{
+    transform: translateX(-50px);
+}
+.jefe-item-container:nth-of-type(2)>.jefe-item-info{
+    transform: translateX(-25px);
+}
+
+.jefe-item-figure{
+    width: 6.25rem;
+    height: 6.25rem;
+    margin: 0;
+    position: relative;
+    background: linear-gradient(90deg,  rgba(255,160,0,1)  0%, rgba(247,216,123,1) 100%);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+}
+.jefe-item-figure button{
+    background-color: transparent;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+.jefe-item-figure:hover img{
+    transform: scale(1.05);
+}
+.jefe-item-img{
+    height: 90%;
+    width: 90%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    aspect-ratio: 3/2;
+    object-fit: contain;
+}
+.jefe-item-desc{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.nombre-anio{
+    text-align: left;
+    margin: 0;
+    padding: 0 .625rem;
+    font-size: .75rem;
+    width: 100px;
+}
+span.nombre-anio{
+    font-size: .625rem;
+}
+
+@media(max-width: 630px){
+    #jefes-anteriores-content{
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+    .columna{
+        gap: 1.25rem;
+    }
+    .jefe-item-container:nth-of-type(1)>.jefe-item-info{
+        transform: translateX(0px);
+    }
+    .jefe-item-container:nth-of-type(2)>.jefe-item-info{
+        transform: translateX(0px);
+    }
+}
+
+/* Sugerencias */
+#sugerencias-container{
+    display: grid;
+    width: 90vw;
+    justify-items: center;
+    margin: 1.25rem auto;
+}
+form#sugerencias{
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: center;
+    width: 80%;
+}
+div#sugerencias-info{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 1.25rem;
+}

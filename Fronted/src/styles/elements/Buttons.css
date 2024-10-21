@@ -1,0 +1,41 @@
+.button-submit{
+    background-color: var(--submit-btn);
+    font-size: 18px;
+}
+.button-nav{
+    background-color: var(--uam-color);
+}
+.button-link{
+    background-color: var(--uam-color);
+    text-decoration: none;
+}
+.button-submit, .button-nav, .button-link{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    padding: 0 1.25rem;
+    --bs-btn-font-size: 1rem;
+    min-height: 42px;
+    text-align: center;
+    border: none;
+    color: var(--white);
+    border: none;
+    width: clamp(12.5rem, 100%, 18.75rem);
+    max-width: 18.75rem;
+    transition: all 0.25s;
+}
+.section-footer-div .button-nav,.section-footer-div .button-link{
+    padding: .75rem 1.25rem;
+}
+.section-footer-div .button-link:hover{
+    border: none;
+}
+.button-submit:hover, .button-nav:hover{
+    background-color: var(--uam-color-light);
+}
+.button-link:hover{
+    background-color: var(--uam-color-light);
+    border: 2px solid var(--uam-color);
+}
+

@@ -1,0 +1,2549 @@
+const express = require("express");
+const mysql = require("mysql2");
+const cors = require('cors');
+// var FB = require('fb');
+
+//Facebook token
+const ACCESS_TOKEN_PAGE = 'EAAPD4v3IjmIBAIggEmyD79vfLJLcGZAAZCW5QmzCx9HcftFGqZCjrPTZAGZCvxS3nVNRAWuMIMrOGeOM6vZBLpYB3dJWqTItLjZANj4MFqRVFal3qiZCx8dpdXIOGa9TaQGE3ZCAavm6JzoCjMHGakhtyTZB8QZBBDvaoRQrQDYzvQWIkvRGKBuTjJL';
+var namePage='dmascuaji';
+var msgNuevoSeminario= "Texto de seminario agregado";
+var msgNuevoProyectoInvestigacion= "Texto de proyecto de investigación agregado";
+var msgNuevaPublicacion= "Texto de publicacion agregada";
+///
+
+const host = "http://localhost:5173"; //Host para pruebas en máquina local vite frontend
+//const host = "http://dmas.cua.uam.mx"; //Host para producción
+
+const hostApi = "http://localhost:3001"; //Host para pruebas en máquina local
+//const hostApi = "http://dmas.cua.uam.mx:3001"; //Host para producción
+
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const multer = require('multer');
+var path = require('path');
+const { Console } = require("console");
+const fs = require('fs')
+
+const app = express();
+
+//app.use(express.json());
+app.use(cors({
+    origin: host,
+    methods: ["GET", "POST", "PUT" ,"DELETE"],
+    credentials: true
+}))
+
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+app.use(bodyParser.raw());
+app.use(express.json());
+
+app.use(
+    session({
+        key: "user",
+        secret: "dmas",
+        resave: false,
+        saveUninitialized: false,
+        cookie: { maxAge: 24 * 60 * 60 * 1000 }
+        /*cookie:{
+            expires: 1500, //La sesión expira en 2 horas en milisegundos
+        },*/
+    })
+);
+
+/*app.use(function (req, res, next) {
+    console.log("Soy nuevo y enviare: "+req.session.user);
+    if (req.session.user) {
+        return res.send(req.session.user);
+    }
+    next();
+});*/
+
+
+const db = mysql.createPool({
+    connectionLimit: 10,
+    host: "148.206.168.33",
+    user: "adminUser",
+    password: "X22muy2Dqw,q",
+    database: "dmas",
+    port: "3306"
+})
+
+db.getConnection((err) => {
+    if(err){
+       console.log(`Error al conectarse a la base de datos: ${err}`)       
+    }
+    else{
+        console.log("Conectado a la base de datos")
+    }
+});
+
+//=================Inicia Configuración de almacenamiento de imágenes ============================
+
+var storageSeminario = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'public/seminarios')
+    },
+    filename: function (req, file, cb) {
+      cb(null, "seminario" + '-' + Date.now()+path.extname(file.originalname));
+    }
+})
+   
+var uploadSeminarios = multer({ storage: storageSeminario })
+
+var storageProyectoInvestigacion = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'public/proyectosinvestigacion')
+    },
+    filename: function (req, file, cb) {
+      cb(null, "proyectoinvestigacion" + '-' + Date.now()+path.extname(file.originalname));
+    }
+})
+   
+var uploadProyectosInvestigacion = multer({ storage: storageProyectoInvestigacion })
+
+var storagePublicacion = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'public/publicaciones')
+    },
+    filename: function (req, file, cb) {
+      cb(null, "publicacion" + '-' + Date.now()+path.extname(file.originalname));
+    }
+})
+   
+var uploadPublicaciones = multer({ storage: storagePublicacion })
+
+var storageEvento = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'public/eventos')
+    },
+    filename: function (req, file, cb) {
+      cb(null, "evento" + '-' + Date.now()+path.extname(file.originalname));
+    }
+})
+   
+var uploadEventos = multer({ storage: storageEvento })
+
+var storageProyectoTerminal = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'public/proyectosterminales')
+    },
+    filename: function (req, file, cb) {
+      cb(null, "proyectoterminal" + '-' + Date.now()+path.extname(file.originalname));
+    }
+})
+   
+var uploadProyectosTerminales = multer({ storage: storageProyectoTerminal })
+
+// var storageLineamientoProc = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, 'public/lineamientosproc')
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null, "lineamientoproc" + '-' + Date.now()+path.extname(file.originalname));
+//     }
+// })
+   
+// var uploadLineamientosProc = multer({ storage: storageLineamientoProc })
+var storageLineamientoProc = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if (file.fieldname === "imagen") {
+            cb(null, 'public/lineamientosproc/imagenes');
+        } else if (file.fieldname === "documento") {
+            cb(null, 'public/lineamientosproc/documentos');
+        }
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+})
+
+var uploadLineamientosProc = multer({ storage: storageLineamientoProc }).fields([
+    { name: 'imagen', maxCount: 1 }, 
+    { name: 'documento', maxCount: 1 }
+]);
+
+
+//=================Termia Configuración de almacenamiento de imágenes ============================
+
+app.get('/get/login', (req, res) => {
+    console.log("Comprobacion de sesion: "+req.session.user);
+    if(req.session.user===true){
+        res.send({loggedIn: true});
+    }else{
+        res.send({loggedIn: false});
+    }
+})
+
+app.post('/post/login', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    console.log("Intento de inicio de sesión | user: "+username+" pass: "+password);
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM usuarios WHERE BINARY mail = ? AND BINARY password = ? ;',[ username, password ],
+            (err, result) => {
+                if(err){
+                    console.log('Inicio de sesión sin éxito: '+err);
+                    res.status(500).send("Error interno del servidor");
+                }
+                else if(result.length>0){
+                    console.log("Guardo "+result[0].idusuario+" en cookie.")
+                    req.session.user = true;
+                    console.log("sesion: "+req.session);
+                    console.log('Inicio de sesión con éxito');
+                    res.send(result);
+                }else if(result.length===0){
+                    res.status(404).send("No hay elementos")
+                }
+                else{
+                    console.log('Error desconocido al iniciar sesión');
+                    res.send("error");
+                }
+                conn.release();
+            });
+        }
+    });
+});
+
+app.post('/post/logout', (req, res) =>{
+    req.session.destroy((err)=>{
+        if(err){
+            console.log(err);
+            res.status(500).send("Error al cerrar sesión");
+        }else{
+            res.status(200).send("Sesión cerrada exitosamente")
+        }
+    });
+});
+
+
+//===============================================================================================
+//==================================Inicia  ADMINISTRADOR ===========================================
+//===============================================================================================
+
+
+app.get('/usuarios', async function(req, res){
+    db.getConnection((err, conn) => {
+        //console.log(conn);
+        if(err){
+            res.send("error");
+        } else {
+            conn.query('SELECT * FROM usuarios', function(error, results){
+                if(error){
+                  return res.status(500).json({ message: 'Error interno del servidor' });
+                }else if (results.length === 0){
+                    return res.status(404).json({ message: 'No hay elementos' });
+                }
+                else{
+                   return res.status(200).json(results);
+                }
+                conn.release();
+            });
+            // Libera la conexión aquí
+            conn.release();
+        }
+    });
+})
+
+app.get("/obtenerUsuario/:correo", (req, res) => {
+  const ID_NOT_FOUND = 'Usuario no encontrado';
+  const INTERNAL_SERVER_ERROR = 'Error interno del servidor';
+
+  const sql = "SELECT * FROM usuarios WHERE mail = ?";
+  const correo = req.params.correo;
+
+  db.getConnection((err, conn) => {
+    if (err) {
+      return res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+    }
+    else {
+      conn.query(sql, [correo], (err, result) => {
+        if (err) {
+          res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+        }
+        else if (result.length === 0) {
+          res.status(200).json({ status: 'no_encontrado', message: ID_NOT_FOUND });
+        }
+        else {
+          res.status(200).json({
+            status: 'encontrado',
+            datos: result
+          });
+        }
+        conn.release();
+      });
+    }
+  });
+});
+
+app.get("/verificarCorreoExistente/:correo/:id", (req, res) => {
+    const ID_NOT_FOUND = 'Usuario no encontrado';
+    const INTERNAL_SERVER_ERROR = 'Error interno del servidor';
+  
+    const sql = "SELECT * FROM usuarios WHERE mail = ? AND idusuario != ?";
+    const correo = req.params.correo;
+    const id = req.params.id;
+
+    db.getConnection((err, conn) => {
+      if (err) {
+        return res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+      }
+      else {
+        conn.query(sql, [correo,id], (err, result) => {
+          if (err) {
+            res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+          }
+          else if (result.length === 0) {
+            res.status(200).json({ status: 'correo_no_vinculado', message: ID_NOT_FOUND });
+          }
+          else {
+            res.status(200).json({
+              status: 'encontrado',
+              datos: result
+            });
+          }
+          conn.release();
+        });
+      }
+    });
+  });
+
+// obtener un usuario
+app.get("/obtenerUsuarioEspecifico/:idUsuario", (req, res) => {
+  const INTERNAL_SERVER_ERROR = 'Error interno del servidor';
+
+  const sql = "SELECT * FROM usuarios WHERE idusuario = ?";
+  const id = parseInt(req.params.idUsuario);
+
+  db.getConnection((err, conn) => {
+    if (err) {
+      return res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+    }
+    else {
+      conn.query(sql, [id], (err, result) => {
+        if (err) {
+          res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+        }
+        else if (result.length === 0) {
+          res.status(404).json({ status: 'no_encontrado', message: 'Usuario no encontrado' });
+        }
+        else {
+          res.status(200).json({
+            status: 'encontrado',
+            datos: result
+          });
+        }
+        conn.release();
+      });
+    }
+  })
+});
+
+
+
+app.post("/registrarUsuario", (req, res) => {
+  const sql = "INSERT INTO usuarios (nombre,apaterno,amaterno,mail, password) VALUES (?, ?, ?, ?, ?)";
+
+  // lo obtenemos de los name del formulario
+  const nombre = req.body.nombre;
+  const apaterno = req.body.apaterno;
+  const amaterno = req.body.amaterno;
+  const mail = req.body.mail;
+  const password = req.body.password;
+
+  // Utiliza pool de conexiones en lugar de createConnection
+  db.query(sql, [nombre, apaterno, amaterno, mail, password], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: 'Error al registrar el usuario' });
+    } else {
+      console.log(result);
+      return res.status(201).json({ message: 'Usuario registrado exitosamente' });
+    }
+  });
+});
+
+
+app.delete("/eliminarUsuario/:idUsuario", async (req, res) => {
+  const id = parseInt(req.params.idUsuario);
+  try {
+    // Obtener nombres de todas las tablas
+    db.query('SHOW TABLES', async (err, tables) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Error interno del servidor', dato: typeof (id) });
+      }
+
+      // Iterar sobre las tablas
+      for (const tableRow of tables) {
+        const tableName = Object.values(tableRow)[0];
+
+        // Consulta para verificar la relación en cada tabla
+        const verificarRelacionQuery = `
+          SELECT COUNT(*)
+          FROM information_schema.table_constraints AS tc
+          JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name
+          WHERE tc.constraint_type = 'FOREIGN KEY' AND kcu.table_name = ? AND kcu.column_name = 'idusuario'
+            AND EXISTS (
+                SELECT 1
+                FROM ${tableName}
+                WHERE idusuario = ?
+            )`;
+
+        // Ejecutar la consulta
+        db.query(verificarRelacionQuery, [tableName, id], async (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).json({ message: 'Error interno del servidor', dato: typeof (id) });
+          }
+
+          const cont = result[0]['COUNT(*)'];
+          if (cont > 0) {
+            //console.log("Se encontro relacion con la tabla: " + tableName);
+            const sqlUpdate = `UPDATE ${tableName} SET idusuario = 1 WHERE idusuario = ?`;
+
+            // Ejecutar la actualización
+            db.query(sqlUpdate, [id], (err, result) => {
+              if (err) {
+                console.log(err);
+                return res.status(500).json({ message: 'Error interno del servidor', dato: typeof (id) });
+              } else {
+                console.log(result);
+              }
+            });
+          }
+
+        });
+      }
+
+      console.log("Eliminando Usuario...");
+      const sqlDelete = "DELETE FROM usuarios WHERE idusuario = ?";
+
+      // Ejecutar la eliminación
+      db.query(sqlDelete, [id], (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ message: 'Error interno del servidor', dato: typeof (id) });
+        } else {
+          console.log(result);
+          return res.status(201).json({ message: 'Usuario eliminado exitosamente', dato: id });
+        }
+      });
+
+      // Enviar resultados como respuesta JSON
+      //res.json(resultados);
+    });
+  } catch (error) {
+    console.error('Error:', error.message);
+    // Enviar un error como respuesta JSON
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+
+app.post("/eliminarGrupoUsuarios", (req, res) => {
+  const sql = "DELETE FROM usuarios WHERE (id,nombre,mail) VALUES (?, ?, ?)";
+
+  const id = req.body.id;
+  const nombre = req.body.nombre;
+  const email = req.body.email;
+
+  // Utiliza pool de conexiones en lugar de createConnection
+  db.query(sql, [id, nombre, email], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: 'Error interno del servidor' });
+    } else {
+      console.log(result);
+      return res.status(201).json({ message: 'Usuario eliminado exitosamente' });
+    }
+  });
+});
+
+app.put("/actualizarUsuario/:idUsuario", (req, res) => {
+  const sql = "UPDATE usuarios SET nombre = ?, apaterno = ?, amaterno = ?, mail = ?, password = ? WHERE idusuario = ?";
+
+  const nombre = req.body.nombre;
+  const apaterno = req.body.apaterno;
+  const amaterno = req.body.amaterno;
+  const email = req.body.mail;
+  const password = req.body.password;
+  const id = req.params.idUsuario; // Accede al id desde los parámetros de la URL
+
+  db.query(sql, [nombre, apaterno, amaterno, email, password, id], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: 'Error al actualizar el usuario' });
+    } else {
+      console.log(result);
+      return res.status(201).json({ message: 'Usuario actualizado exitosamente' });
+    }
+  })
+});
+
+//===============================================================================================
+//==================================Inicia Seminarios ===========================================
+//===============================================================================================
+
+app.get('/get/seminarios', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM seminarios ORDER BY fecha DESC', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/seminarios/mas-lejano-primero', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM seminarios ORDER BY fecha ASC', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/seminarios/mas-proximo', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM seminarios ORDER BY fecha DESC LIMIT 1;', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();    
+    });
+});
+
+
+app.get('/get/seminarios/filtrar', function(req, res){
+    const busqueda = req.query.busqueda;
+    const expositor = req.query.expositor=="-1" ? "": req.query.expositor;
+    const area = req.query.area=="0" ? "": req.query.area;
+    console.log("Recibi: Busqueda: "+busqueda+" Expositor: "+expositor+" Area: "+area);
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM seminarios WHERE (titulo LIKE ? OR resumen LIKE ? OR expositor LIKE ? OR semblanza LIKE ?) AND expositor LIKE ? AND area LIKE ?',
+            ['%' + busqueda + '%', '%' + busqueda + '%', '%' + busqueda + '%', '%' + busqueda + '%', '%' +expositor+ '%', '%' + area+ '%'],
+            function (error, results) {
+                if (error) {        
+                    console.log("error: "+error)
+                    res.send("error");
+                } else {
+                    console.log(JSON.stringify(results))
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });    
+    
+});
+
+app.get('/get/seminarios/seminario-item', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM seminarios WHERE idseminario=?',[id], function(error, results){
+                if ( error ){    
+                    console.log("error: "+error)
+                    res.status(500).send("Error interno del servidor");
+                } else if(results.length===0){
+                    res.status(404).send("No hay elementos")
+                }
+                else {
+                    fecha = new Date(results[0].fecha);
+                    fecha = fecha.toJSON(fecha);
+                    results[0].fecha=fecha.substr(0,10);
+                    youtube = results[0].youtube;
+                    results[0].youtube = getYoutubeVideoId(youtube);
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+    
+});
+
+app.get('/get/seminarios/seminario-edit', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM seminarios WHERE idseminario=?',[id], function(error, results){
+                if ( error ){
+                    console.log("error: "+error);
+                    res.send("error");
+                } else {
+                    fecha = new Date(results[0].fecha);
+                    fecha = fecha.toJSON(fecha);
+                    results[0].fecha=fecha.substr(0,10);
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+    
+});
+
+app.get('/get/seminarios/expositores', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT DISTINCT expositor FROM seminarios', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+    
+});
+
+
+app.post('/post/seminarios/',uploadSeminarios.single("imagen"), (req, res) =>{
+    const titulo = req.body.titulo;
+    const expositor = req.body.expositor;
+    const youtube = req.body.youtube;
+    const fecha = req.body.fecha;
+    const area = req.body.area;
+    const resumen = req.body.resumen;
+    const semblanza = req.body.semblanza;
+    const facebookPost = req.body.publicarFacebook;
+
+    console.log("Se solicita agregar un seminario.")
+    const host = hostApi+"/seminarios/";
+    const imagenRuta = req.file ? host + path.basename(req.file.path) : ''
+    const fbImagenRuta = req.file ? './public/seminarios/' + path.basename(req.file.path) : '';  
+
+    var sql = "INSERT INTO seminarios (titulo, resumen, expositor, semblanza, fecha, area, imagen, youtube, idusuario) VALUES ?";
+    var values = [
+        [titulo, resumen, expositor, semblanza, fecha, area, imagenRuta, youtube, 1],
+    ];
+
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, [values], function (err, result) {
+                if (err){
+                    console.log("Error al publicar seminario: "+err);
+                    res.send(false);
+                }else{
+                    console.log("Se agregó un seminario: "+result.insertId);
+                    res.send((result.insertId).toString());
+                }
+                
+            });
+        }
+        conn.release();
+    });
+      
+    //Publicar en facebook
+
+    if(facebookPost){
+        facebookImagePost(msgNuevoSeminario, fbImagenRuta);
+    }
+    
+});
+
+app.post('/post/seminarios/edit/image',uploadSeminarios.single("imagen"), (req, res) =>{
+    const idseminario = req.body.id;
+    const titulo = req.body.titulo;
+    const expositor = req.body.expositor;
+    const youtube = req.body.youtube;
+    const fecha = req.body.fecha;
+    const area = req.body.area;
+    const resumen = req.body.resumen;
+    const semblanza = req.body.semblanza;
+    const idusuario = req.body.userId;
+    
+    console.log("Se solicita modificar con imagen.")
+    const host = hostApi+"/seminarios/";
+    const imagenRuta = host + path.basename(req.file.path);
+    //Obtener nombre de imagen en base de datos para eliminarla.
+    var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM seminarios WHERE idseminario= ?;"
+    
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sqlImage, idseminario, function (error, results) {
+                if(error){
+                    console.log("Hubo un error.");
+                }else{
+                    if (fs.existsSync("./public/seminarios/" + results[0].imagen)) { //Si el archivo existe
+                        fs.unlink("./public/seminarios/" + results[0].imagen, (err) => {
+                            if (err) {
+                                console.error("No se pudo eliminar la imagen.")
+                            }
+                        });
+                    }
+                }    
+            });
+        }
+        conn.release();
+    });
+
+            
+    var sql = "UPDATE `seminarios` SET `titulo` = ?, `resumen` = ?, `expositor`=?, `semblanza`=?, `fecha`=?, `area`=?, `youtube`=?, `idusuario` =?, `imagen` =?  WHERE `idseminario`=?;";
+    var values = [titulo, resumen, expositor, semblanza, fecha, area, youtube, idusuario, imagenRuta, idseminario];
+    
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, values, function (err) {
+                if (err){ //Error al editar
+                    console.log(err)
+                    res.send(false);
+                }else{ //Se editó correctamente
+                    res.send(idseminario+"");
+                }
+            });
+        }
+        conn.release();
+    });
+
+    
+
+});
+
+app.post('/post/seminarios/edit', (req, res) =>{
+    const idseminario = req.body.id;
+    const titulo = req.body.titulo;
+    const expositor = req.body.expositor;
+    const youtube = req.body.youtube;
+    const fecha = req.body.fecha;
+    const area = req.body.area;
+    const resumen = req.body.resumen;
+    const semblanza = req.body.semblanza;
+    const publicarFb = req.body.publicarFacebook;
+    const idusuario = req.body.userId;
+    
+    console.log("Se solicita modificar sin imagen.")
+            
+    var sql = "UPDATE `seminarios` SET `titulo` = ?, `resumen` = ?, `expositor`=?, `semblanza`=?, `fecha`=?, `area`=?, `youtube`=?, `idusuario` =? WHERE `idseminario`=?;";
+    var values = [titulo, resumen, expositor, semblanza, fecha, area, youtube, idusuario, idseminario];
+    
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, values, function (err) {
+                if (err){ //Error al editar
+                    res.send(false);
+                }else{ //Se editó correctamente
+                    res.send(idseminario+"");
+                }
+            });
+        }
+        conn.release();
+    });
+    
+    
+
+});
+
+app.delete('/delete/seminarios/item', function (req, res) {
+    const id = req.body.id;
+
+    //Obtener nombre de imagen en base de datos para eliminarla.
+    var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM seminarios WHERE idseminario= ?;"
+    
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sqlImage, id, function (error, results) {
+                if(error){
+                    console.log("Hubo un error.");
+                }else{
+                    if (fs.existsSync("./public/seminarios/" + results[0].imagen)) { //Si el archivo existe
+                        fs.unlink("./public/seminarios/" + results[0].imagen, (err) => {
+                            if (err) {
+                                console.error("No se pudo eliminar la imagen.")
+                            }
+                        });
+                    }
+                    //Eliminar Seminario
+                    conn.query('DELETE FROM seminarios WHERE idseminario=?', [id], function (error, results, fields) {
+                        if (error) {
+                            res.status(500).send("Error interno del servidor", error);
+                        }else{
+                            res.send("Seminario eliminado con éxito");
+                        }
+                    });
+                } 
+                conn.release();
+            });
+        }
+        
+    });
+});
+
+//================================================================================================
+//==================================Termina Seminarios ===========================================
+//================================================================================================
+
+//================================================================================================
+//===========================Inicia Proyectos de Investigación ===================================
+//================================================================================================
+
+app.get('/get/proyectosinvestigacion', function(req, res){ 
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosinvestigacion ORDER BY fechaactualizacion DESC', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/proyectosinvestigacion/mas-lejano-primero', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosinvestigacion ORDER BY fechaactualizacion ASC', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+    
+});
+
+app.get('/get/proyectosinvestigacion/filtrar', function(req, res){
+    const busqueda = req.query.busqueda;
+    const responsable = req.query.responsable=="-1" ? "": req.query.responsable;
+    const area = req.query.area=="0" ? "": req.query.area;
+    console.log("Recibi: Busqueda: "+busqueda+" Responsable: "+responsable);
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosinvestigacion WHERE (titulo LIKE ? OR objetivo LIKE ? OR responsable LIKE ?) AND responsable LIKE ?',
+            ['%' + busqueda + '%', '%' + busqueda + '%', '%' + busqueda + '%', '%' +responsable+ '%'],
+            function (error, results) {
+                if (error) {
+                    console.log("error: "+error);
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+//tomodify
+
+app.get('/get/proyectosinvestigacion/proyectoinvestigacion-item', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosinvestigacion WHERE idproyecto=?',[id], function(error, results){
+                if ( error ){    
+                    console.log("error: "+error)
+                    res.status(500).send("Error interno del servidor");
+                } else if(results.length===0){
+                    res.status(404).send("No hay elementos")
+                } else {
+                    fechainicio = new Date(results[0].fechainicio);
+                    fechainicio = fechainicio.toJSON(fechainicio);
+                    results[0].fechainicio=fechainicio.substr(0,10);
+                    fechaactualizacion = new Date(results[0].fechaactualizacion);
+                    fechaactualizacion = fechaactualizacion.toJSON(fechaactualizacion);
+                    results[0].fechaactualizacion=fechaactualizacion.substr(0,10);
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/proyectosinvestigacion/proyectoinvestigacion-edit', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosinvestigacion WHERE idproyecto=?',[id], function(error, results){
+                if ( error ){
+                    console.log("error: "+error);
+                    res.send("error");
+                } else {
+                    fechainicio = new Date(results[0].fechainicio);
+                    fechainicio = fechainicio.toJSON(fechainicio);
+                    results[0].fechainicio=fechainicio.substr(0,10);
+                    fechaactualizacion = new Date(results[0].fechaactualizacion);
+                    fechaactualizacion = fechaactualizacion.toJSON(fechaactualizacion);
+                    results[0].fechaactualizacion=fechaactualizacion.substr(0,10);
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/proyectosinvestigacion/profesores', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT DISTINCT responsable FROM proyectosinvestigacion', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+
+app.post('/post/proyectosinvestigacion/',uploadProyectosInvestigacion.single("imagen"), (req, res) =>{
+    const titulo = req.body.titulo;
+    const responsable = req.body.responsable;
+    const enlace = req.body.enlace;
+    const fechainicio = req.body.fechainicio;
+    const fechaactualizacion = req.body.fechaactualizacion;
+    const area = req.body.area;
+    const objetivo = req.body.objetivo;
+    const participantes = req.body.participantes;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+    console.log("Se solicita agregar un proyecto de investigacion.")
+    const host = hostApi+"/proyectosinvestigacion/";
+    const imagenRuta = req.file ? host + path.basename(req.file.path) : '';
+    const fbImagenRuta = req.file ? './public/proyectosinvestigacion/' + path.basename(req.file.path) : '';
+        
+    
+    var sql = "INSERT INTO proyectosinvestigacion (titulo, objetivo, responsable, participantes, fechainicio, fechaactualizacion, area, imagen, enlace, idusuario) VALUES ?";
+    var values = [
+        [titulo, objetivo, responsable, participantes, fechainicio, fechaactualizacion, area, imagenRuta, enlace, userId],
+    ];
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, [values], function (err, result) {
+                if (err){
+                    console.log("Error al publicar proyecto de investigación: "+err);
+                    res.send(false);
+                }else{
+                    console.log("Se agregó un proyecto de investigación: "+result.insertId);
+                    res.send((result.insertId).toString());
+                }
+                
+            });
+        }
+        conn.release();
+    });
+    
+    //Publicar en facebook
+
+    if(facebookPost){
+        facebookImagePost(msgNuevoProyectoInvestigacion, fbImagenRuta);
+    }
+    
+});
+
+app.post('/post/proyectosinvestigacion/edit/image',uploadProyectosInvestigacion.single("imagen"), (req, res) =>{
+    const idproyecto = req.body.id;
+    const titulo = req.body.titulo;
+    const responsable = req.body.responsable;
+    const enlace = req.body.enlace;
+    const fechainicio = req.body.fechainicio;
+    const fechaactualizacion = req.body.fechaactualizacion;
+    const area = req.body.area;
+    const objetivo = req.body.objetivo;
+    const participantes = req.body.participantes;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+    
+    console.log("Se solicita modificar con imagen.")
+    const host = hostApi+"/proyectosinvestigacion/";
+    const imagenRuta = host+path.basename(req.file.path);
+    const fbImagenRuta = './public/proyectosinvestigacion/'+path.basename(req.file.path);
+    //Obtener nombre de imagen en base de datos para eliminarla.
+    var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM proyectosinvestigacion WHERE idproyecto= ?;"
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sqlImage, idproyecto, function (error, results) {
+                if(error){
+                    console.log("Hubo un error.");
+                }else{
+                    if (fs.existsSync("./public/proyectosinvestigacion/" + results[0].imagen)) { //Si el archivo existe
+                        fs.unlink("./public/proyectosinvestigacion/" + results[0].imagen, (err) => {
+                            if (err) {
+                                console.error("No se pudo eliminar la imagen.")
+                            }
+                        });
+                    }
+                }    
+            });
+        }
+        conn.release();
+    });
+            
+    var sql = "UPDATE `proyectosinvestigacion` SET `titulo` = ?, `objetivo` = ?, `responsable`=?, `participantes`=?, `fechainicio`=?, `fechaactualizacion`=?, `area`=?, `enlace`=?, `idusuario` =?, `imagen` =?  WHERE `idproyecto`=?;";
+    var values = [titulo, objetivo, responsable, participantes, fechainicio, fechaactualizacion, area, enlace, userId, imagenRuta, idproyecto];
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, values, function (err) {
+                if (err){ //Error al editar
+                    console.log(err)
+                    res.send(false);
+                }else{ //Se editó correctamente
+                    res.send(idproyecto+"");
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.post('/post/proyectosinvestigacion/edit', (req, res) =>{
+    const idproyecto = req.body.id;
+    const titulo = req.body.titulo;
+    const responsable = req.body.responsable;
+    const enlace = req.body.enlace;
+    const fechainicio = req.body.fechainicio;
+    const fechaactualizacion = req.body.fechaactualizacion;
+    const area = req.body.area;
+    const objetivo = req.body.objetivo;
+    const participantes = req.body.participantes;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+    
+    console.log("Se solicita modificar sin imagen.")
+            
+    var sql = "UPDATE `proyectosinvestigacion` SET `titulo` = ?, `objetivo` = ?, `responsable`=?, `participantes`=?, `fechainicio`=?, `fechaactualizacion`=?, `area`=?, `enlace`=?, `idusuario` =?  WHERE `idproyecto`=?;";
+    var values = [titulo, objetivo, responsable, participantes, fechainicio, fechaactualizacion, area, enlace, userId, idproyecto];
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, values, function (err) {
+                if (err){ //Error al editar
+                    console.log(err)
+                    res.send(false);
+                }else{ //Se editó correctamente
+                    res.send(idproyecto+"");
+                }
+            });
+        }
+        conn.release();
+    });
+    
+
+});
+
+app.delete('/delete/proyectosinvestigacion/item', function (req, res) {
+    const id = req.body.id;
+
+    //Obtener nombre de imagen en base de datos para eliminarla.
+    var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM proyectosinvestigacion WHERE idproyecto= ?;"
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sqlImage, id, function (error, results) {
+                if(error){
+                    console.log("Hubo un error.");
+                }else{
+                    if (fs.existsSync("./public/proyectosinvestigacion/" + results[0].imagen)) { //Si el archivo existe
+                        fs.unlink("./public/proyectosinvestigacion/" + results[0].imagen, (err) => {
+                            if (err) {
+                                console.error("No se pudo eliminar la imagen.")
+                            }
+                        });
+                    }
+                    //Eliminar Proyecto de investigación
+                    conn.query('DELETE FROM proyectosinvestigacion WHERE idproyecto=?', [id], function (error, results, fields) {
+                        if (error) {
+                            res.status(500).send("Error interno del servidor", error);
+                        }else{
+                            res.send("Proyecto de investigación eliminado con éxito");
+                        }
+                    });
+                }
+                conn.release();
+            });
+        }
+    });
+    
+});
+
+//=================================================================================================
+//===========================Termina Proyectos de Investigación ===================================
+//=================================================================================================
+
+//================================================================================================
+//===========================Inicia Publicaciones ===================================
+//================================================================================================
+
+app.get('/get/publicaciones', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM publicaciones ORDER BY anio DESC', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });   
+});
+
+app.get('/get/publicaciones/mas-lejano-primero', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM publicaciones ORDER BY anio ASC', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    }); 
+});
+
+app.get('/get/publicaciones/filtrar', function(req, res){
+    const busqueda = req.query.busqueda;
+    const autor = req.query.autor=="-1" ? "": req.query.autor;
+    const area = req.query.area=="0" ? "": req.query.area;
+    const tipo = req.query.tipo=="0" ? "": req.query.tipo;
+    console.log("Recibi: Busqueda: "+busqueda+" Autor: "+autor+" Area: "+area+" Tipo: "+tipo);
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM publicaciones WHERE (titulo LIKE ? OR resumen LIKE ? OR autor LIKE ?) AND autor LIKE ? AND area LIKE ? AND tipo LIKE ?',
+            ['%' + busqueda + '%', '%' + busqueda + '%', '%' + busqueda + '%', '%' +autor+ '%', '%' + area+ '%','%' + tipo+ '%'],
+            function (error, results) {
+                if (error) {
+                    console.log("error: "+error);
+                    res.send("error");
+                } else {
+                    console.log(JSON.stringify(results))
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/publicaciones/publicacion-item', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM publicaciones WHERE idpublicacion=?',[id], function(error, results){
+                if ( error ){    
+                    console.log("error: "+error)
+                    res.status(500).send("Error interno del servidor");
+                } else if(results.length===0){
+                    res.status(404).send("No hay elementos")
+                } else {
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/publicaciones/publicacion-edit', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM publicaciones WHERE idpublicacion=?',[id], function(error, results){
+                if ( error ){
+                    console.log("error: "+error);
+                    res.send("error");
+                } else {
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/publicaciones/autores', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT DISTINCT autor FROM publicaciones', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.post('/post/publicaciones/',uploadPublicaciones.single("imagen"), (req, res) =>{
+    const titulo = req.body.titulo;
+    const autor = req.body.autor;
+    const anio = req.body.anio;
+    const area = req.body.area;
+    const tipo = req.body.tipo;
+    const resumen = req.body.resumen;
+    const enlace = req.body.enlace;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+
+    console.log("Se solicita agregar una publicacion.")
+    const host = hostApi+"/publicaciones/";
+    const imagenRuta = req.file ? host + path.basename(req.file.path) : '';
+    const fbImagenRuta = req.file ? './public/publicaciones/' + path.basename(req.file.path) : '';
+        
+    var sql = "INSERT INTO publicaciones (titulo, autor, anio, resumen, tipo, area, imagen, enlace, idusuario) VALUES ?";
+    var values = [
+        [titulo, autor, anio, resumen, tipo, area, imagenRuta, enlace, userId],
+    ];
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, [values], function (err, result) {
+                if (err){
+                    console.log("Error al publicar publicacion: "+err);
+                    res.send(false);
+                }else{
+                    console.log("Se agregó una publicacion: "+result.insertId);
+                    res.send((result.insertId).toString());
+                }
+                
+            });
+        }
+        conn.release();
+    });
+
+    //Publicar en facebook
+
+    if(facebookPost){
+        facebookImagePost(msgNuevaPublicacion, fbImagenRuta);
+    }
+    
+});
+
+app.post('/post/publicaciones/edit/image',uploadPublicaciones.single("imagen"), (req, res) =>{
+    const idpublicacion = req.body.id;
+    const titulo = req.body.titulo;
+    const autor = req.body.autor;
+    const anio = req.body.anio;
+    const area = req.body.area;
+    const tipo = req.body.tipo;
+    const resumen = req.body.resumen;
+    const enlace = req.body.enlace;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+    
+    console.log("Se solicita modificar con imagen.")
+    const host = hostApi+"/publicaciones/";
+    const imagenRuta = host+path.basename(req.file.path);
+    const fbImagenRuta = './public/publicaciones/'+path.basename(req.file.path);
+    //Obtener nombre de imagen en base de datos para eliminarla.
+    var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM publicaciones WHERE idpublicacion= ?;"
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sqlImage, idpublicacion, function (error, results) {
+                if(error){
+                    console.log("Hubo un error.");
+                }else{
+                    if (fs.existsSync("./public/publicaciones/" + results[0].imagen)) { //Si el archivo existe
+                        fs.unlink("./public/publicaciones/" + results[0].imagen, (err) => {
+                            if (err) {
+                                console.error("No se pudo eliminar la imagen.")
+                            }
+                        });
+                    }
+                }    
+            });
+        }
+        conn.release();
+    });
+            
+    var sql = "UPDATE `publicaciones` SET `titulo` = ?, `autor` = ?, `anio`=?, `resumen`=?, `tipo`=?, `area`=?, `enlace`=?, `idusuario` =?, `imagen` =?  WHERE `idpublicacion`=?;";
+    var values = [titulo, autor, anio, resumen, tipo, area, enlace, userId, imagenRuta, idpublicacion];
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, values, function (err) {
+                if (err){ //Error al editar
+                    console.log(err)
+                    res.send(false);
+                }else{ //Se editó correctamente
+                    res.send(idpublicacion+"");
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.post('/post/publicaciones/edit', (req, res) =>{
+    const idpublicacion = req.body.id;
+    const titulo = req.body.titulo;
+    const autor = req.body.autor;
+    const anio = req.body.anio;
+    const area = req.body.area;
+    const tipo = req.body.tipo;
+    const resumen = req.body.resumen;
+    const enlace = req.body.enlace;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+    
+    console.log("Se solicita modificar sin imagen.")
+            
+    var sql = "UPDATE `publicaciones` SET `titulo` = ?, `autor` = ?, `anio`=?, `resumen`=?, `tipo`=?, `area`=?, `enlace`=?, `idusuario` =?  WHERE `idpublicacion`=?;";
+    var values = [titulo, autor, anio, resumen, tipo, area, enlace, userId, idpublicacion];
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, values, function (err) {
+                if (err){ //Error al editar
+                    console.log(err)
+                    res.send(false);
+                }else{ //Se editó correctamente
+                    res.send(idpublicacion+"");
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.delete('/delete/publicaciones/item', function (req, res) {
+    const id = req.body.id;
+
+    //Obtener nombre de imagen en base de datos para eliminarla.
+    var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM publicaciones WHERE idpublicacion= ?;";
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sqlImage, id, function (error, results) {
+                if(error){
+                    console.log("Hubo un error.");
+                }else{
+                    if (fs.existsSync("./public/publicaciones/" + results[0].imagen)) { //Si el archivo existe
+                        fs.unlink("./public/publicaciones/" + results[0].imagen, (err) => {
+                            if (err) {
+                                console.error("No se pudo eliminar la imagen.")
+                            }
+                        });
+                    }
+                    //Eliminar Publicacion
+                    conn.query('DELETE FROM publicaciones WHERE idpublicacion=?', [id], function (error, results, fields) {
+                        if (error) {
+                            res.status(500).send("Error interno del servidor", error);
+                        } else {
+                            res.send("Publicación eliminada con éxito");
+                        }
+                    });
+                }
+                conn.release();
+            });
+        }
+    });
+});
+
+//=================================================================================================
+//===========================Termina Publicaciones================================================
+//=================================================================================================
+
+//================================================================================================
+//===========================Inicia Eventos===================================
+//================================================================================================
+
+app.get('/get/eventos', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM otroseventos ORDER BY fecha DESC', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });   
+});
+
+app.get('/get/eventos/mas-lejano-primero', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM otroseventos ORDER BY fecha ASC', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    }); 
+});
+
+app.get('/get/eventos/filtrar', function(req, res){
+    const busqueda = req.query.busqueda;
+    const organizador = req.query.organizador=="-1" ? "": req.query.organizador;
+    const area = req.query.area=="0" ? "": req.query.area;
+    console.log("Recibi: Busqueda: "+busqueda+" Organizador: "+organizador+" Area: "+area);
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM otroseventos WHERE (titulo LIKE ? OR descripcion LIKE ? OR organizador LIKE ?) AND organizador LIKE ? AND area LIKE ?',
+            ['%' + busqueda + '%', '%' + busqueda + '%', '%' + busqueda + '%', '%' +organizador+ '%', '%' + area+ '%'],
+            function (error, results) {
+                if (error) {
+                    console.log("error: "+error);
+                    res.send("error");
+                } else {
+                    console.log(JSON.stringify(results))
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/eventos/evento-item', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM otroseventos WHERE idevento=?',[id], function(error, results){
+                if ( error ){    
+                    console.log("error: "+error)
+                    res.status(500).send("Error interno del servidor");
+                } else if(results.length===0){
+                    res.status(404).send("No hay elementos")
+                } else {
+                    fecha = new Date(results[0].fecha);
+                    fecha = fecha.toJSON(fecha);
+                    results[0].fecha=fecha.substr(0,10);
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/eventos/evento-edit', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM otroseventos WHERE idevento=?',[id], function(error, results){
+                if ( error ){
+                    console.log("error: "+error);
+                    res.send("error");
+                } else {
+                    fecha = new Date(results[0].fecha);
+                    fecha = fecha.toJSON(fecha);
+                    results[0].fecha=fecha.substr(0,10);
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/eventos/organizadores', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT DISTINCT organizador FROM otroseventos', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.post('/post/eventos/',uploadEventos.single("imagen"), (req, res) =>{
+    const titulo = req.body.titulo;
+    const organizador = req.body.organizador;
+    const fecha = req.body.fecha;
+    const area = req.body.area;
+    const lugar = req.body.lugar;
+    const descripcion = req.body.descripcion;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+
+    console.log("Se solicita agregar un evento.")
+    const host = hostApi+"/eventos/";
+    const imagenRuta = req.file?host+path.basename(req.file.path):'';
+    const fbImagenRuta = req.file?'./public/eventos/'+path.basename(req.file.path):'';
+    
+    var sql = "INSERT INTO otroseventos (titulo, organizador, lugar, fecha, area, descripcion, imagen, idusuario) VALUES ?";
+    var values = [
+        [titulo, organizador, lugar, fecha, area, descripcion, imagenRuta, userId],
+    ];
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, [values], function (err, result) {
+                if (err){
+                    console.log("Error al publicar evento: "+err);
+                    res.send(false);
+                }else{
+                    console.log("Se agregó un evento: "+result.insertId);
+                    res.send((result.insertId).toString());
+                }
+                
+            });
+        }
+        conn.release();
+    });
+
+    // Publicar en facebook
+
+    if(facebookPost){
+        facebookImagePost(msgNuevaPublicacion, fbImagenRuta);
+    }
+    
+});
+
+app.post('/post/eventos/edit/image',uploadEventos.single("imagen"), (req, res) =>{
+    const idevento = req.body.id;
+    const titulo = req.body.titulo;
+    const organizador = req.body.organizador;
+    const fecha = req.body.fecha;
+    const area = req.body.area;
+    const lugar = req.body.lugar;
+    const descripcion = req.body.descripcion;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+    
+    console.log("Se solicita modificar con imagen.")
+    const host = hostApi+"/eventos/";
+    const imagenRuta = host+path.basename(req.file.path);
+    const fbImagenRuta = './public/eventos/'+path.basename(req.file.path);
+    //Obtener nombre de imagen en base de datos para eliminarla.
+    var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM otroseventos WHERE idevento= ?;";
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sqlImage, idevento, function (error, results) {
+                if(error){
+                    console.log("Hubo un error.");
+                }else{
+                    if (fs.existsSync("./public/eventos/" + results[0].imagen)) { //Si el archivo existe
+                        fs.unlink("./public/eventos/" + results[0].imagen, (err) => {
+                            if (err) {
+                                console.error("No se pudo eliminar la imagen.")
+                            }
+                        });
+                    }
+                }    
+            });
+        }
+        conn.release();
+    });
+            
+    var sql = "UPDATE `otroseventos` SET `titulo` = ?, `organizador` = ?, `lugar`=?, `fecha`=?, `area`=?, `descripcion`=?, `imagen` =?, `idusuario` =? WHERE `idevento`=?;";
+    var values = [titulo, organizador, lugar, fecha, area, descripcion, imagenRuta, userId, idevento];
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, values, function (err) {
+                if (err){ //Error al editar
+                    console.log(err)
+                    res.send(false);
+                }else{ //Se editó correctamente
+                    res.send(idevento+"");
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.post('/post/eventos/edit', (req, res) =>{
+    const idevento = req.body.id;
+    const titulo = req.body.titulo;
+    const organizador = req.body.organizador;
+    const fecha = req.body.fecha;
+    const area = req.body.area;
+    const lugar = req.body.lugar;
+    const descripcion = req.body.descripcion;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+    
+    console.log("Se solicita modificar sin imagen.")
+            
+    var sql = "UPDATE `otroseventos` SET `titulo` = ?, `organizador` = ?, `lugar`=?, `fecha`=?, `area`=?, `descripcion`=?, `idusuario` =?  WHERE `idevento`=?;";
+    var values = [titulo, organizador, lugar, fecha, area, descripcion, userId, idevento];
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, values, function (err) {
+                if (err){ //Error al editar
+                    console.log(err)
+                    res.send(false);
+                }else{ //Se editó correctamente
+                    res.send(idevento+"");
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.delete('/delete/eventos/item', function (req, res) {
+    const id = req.body.id;
+    // Obtener nombre de imagen en base de datos para eliminarla.
+    var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM otroseventos WHERE idevento= ?;";
+    db.getConnection((err, conn) => {
+        if (err) {
+            res.send("error");
+        } else {
+            conn.query(sqlImage, id, function (error, results) {
+                if (error) {
+                    console.log("Hubo un error.");
+                } else {
+                    if (fs.existsSync("./public/eventos/" + results[0].imagen)) { // Si el archivo existe
+                        fs.unlink("./public/eventos/" + results[0].imagen, (err) => {
+                            if (err) {
+                                console.error("No se pudo eliminar la imagen.")
+                            }
+                        });
+                    }
+
+                    // Eliminar evento
+                    conn.query('DELETE FROM otroseventos WHERE idevento=?', [id], function (error, results, fields) {
+                        if (error) {
+                            res.status(500).send("Error interno del servidor", error);
+                        } else {
+                            res.send("Evento eliminado con éxito");
+                        }
+                    });
+                }
+                conn.release();
+            });
+        }
+    });
+
+});
+
+//================================================================================================
+//===========================Termina Eventos===================================
+//================================================================================================
+
+//===============================================================================================
+//==================================Inicia Proyectos Terminales ===========================================
+//===============================================================================================
+
+app.get('/get/proyectosterminales', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosterminales ORDER BY fechapublicacion DESC', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/proyectosterminales/mas-lejano-primero', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosterminales ORDER BY fechapublicacion ASC', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/proyectosterminales/mas-proximo', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosterminales ORDER BY fechapublicacion DESC LIMIT 1;', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();    
+    });
+});
+
+
+app.get('/get/proyectosterminales/filtrar', function(req, res){
+    const busqueda = req.query.busqueda;
+    const asesores = req.query.asesores=="-1" ? "": req.query.asesores;
+    const area = req.query.area=="0" ? "": req.query.area;
+    console.log("Recibi: Busqueda: "+busqueda+" Asesores: "+asesores+" Area: "+area);
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosterminales WHERE (titulo LIKE ? OR objetivo LIKE ? OR asesores LIKE ? OR tesina LIKE ?) AND asesores LIKE ? AND area LIKE ?',
+            ['%' + busqueda + '%', '%' + busqueda + '%', '%' + busqueda + '%', '%' + busqueda + '%', '%' +asesores+ '%', '%' + area+ '%'],
+            function (error, results) {
+                if (error) {        
+                    console.log("error: "+error)
+                    res.send("error");
+                } else {
+                    console.log(JSON.stringify(results))
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });    
+    
+});
+
+app.get('/get/proyectosterminales/proyectoterminal-item', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosterminales WHERE idproyecto=?',[id], function(error, results){
+                if ( error ){    
+                    console.log("error: "+error)
+                    res.status(500).send("Error interno del servidor");
+                } else if(results.length===0){
+                    res.status(404).send("No hay elementos")
+                } else {
+                    fechapublicacion = new Date(results[0].fechapublicacion);
+                    fechapublicacion = fechapublicacion.toJSON(fechapublicacion);
+                    results[0].fechapublicacion=fechapublicacion.substr(0,10);
+                    youtube = results[0].youtube;
+                    results[0].youtube = getYoutubeVideoId(youtube);
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+    
+});
+
+app.get('/get/proyectosterminales/proyectoterminal-edit', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM proyectosterminales WHERE idproyecto=?',[id], function(error, results){
+                if ( error ){
+                    console.log("error: "+error);
+                    res.send("error");
+                } else {
+                    fechapublicacion = new Date(results[0].fechapublicacion);
+                    fechapublicacion = fechapublicacion.toJSON(fechapublicacion);
+                    results[0].fechapublicacion=fechapublicacion.substr(0,10);
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+    
+});
+
+app.get('/get/proyectosterminales/asesores', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT DISTINCT asesores FROM proyectosterminales', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+
+app.post('/post/proyectosterminales/',uploadProyectosTerminales.single("imagen"), (req, res) =>{
+    const titulo = req.body.titulo;
+    const asesores = req.body.asesores;
+    const autores = req.body.autores;
+    const youtube = req.body.youtube;
+    const fechapublicacion = req.body.fechapublicacion;
+    const area = req.body.area;
+    const objetivo = req.body.objetivo;
+    const tesina = req.body.tesina;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+
+    console.log("Se solicita agregar un proyecto terminal.")
+    const host = hostApi+"/proyectosterminales/";
+    const imagenRuta = req.file ? host + path.basename(req.file.path) : '';
+    const fbImagenRuta = req.file ? './public/proyectosterminales/' + path.basename(req.file.path) : '';
+    
+    
+    var sql = "INSERT INTO proyectosterminales (titulo, asesores, objetivo, autores, youtube, tesina, fechapublicacion, area, imagen, idusuario) VALUES ?";
+    var values = [
+        [titulo, asesores, objetivo, autores, youtube, tesina, fechapublicacion, area, imagenRuta, userId],
+    ];
+
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, [values], function (err, result) {
+                if (err){
+                    console.log("Error al publicar proyecto terminal: "+err);
+                    res.send(false);
+                }else{
+                    console.log("Se agregó un proyecto terminal: "+result.insertId);
+                    res.send((result.insertId).toString());
+                }
+                
+            });
+        }
+        conn.release();
+    });
+      
+    //Publicar en facebook
+
+    if(facebookPost){
+        facebookImagePost(msgNuevoSeminario, fbImagenRuta);
+    }
+    
+});
+
+app.post('/post/proyectosterminales/edit/image',uploadProyectosTerminales.single("imagen"), (req, res) =>{
+    const idproyecto = req.body.id;
+    const titulo = req.body.titulo;
+    const asesores = req.body.asesores;
+    const autores = req.body.autores;
+    const youtube = req.body.youtube;
+    const fechapublicacion = req.body.fechapublicacion;
+    const area = req.body.area;
+    const objetivo = req.body.objetivo;
+    const tesina = req.body.tesina;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+    
+    console.log("Se solicita modificar con imagen.")
+    const host = hostApi+"/proyectosterminales/";
+    const imagenRuta = host + path.basename(req.file.path);
+    //Obtener nombre de imagen en base de datos para eliminarla.
+    var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM proyectosterminales WHERE idproyecto= ?;"
+    
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sqlImage, idproyecto, function (error, results) {
+                if(error){
+                    console.log("Hubo un error.");
+                }else{
+                    if (fs.existsSync("./public/proyectosterminales/" + results[0].imagen)) { //Si el archivo existe
+                        fs.unlink("./public/proyectosterminales/" + results[0].imagen, (err) => {
+                            if (err) {
+                                console.error("No se pudo eliminar la imagen.")
+                            }
+                        });
+                    }
+                }    
+            });
+        }
+        conn.release();
+    });
+
+            
+    var sql = "UPDATE `proyectosterminales` SET `titulo` = ?, `asesores` = ?, `objetivo`=?, `autores`=?, `youtube`=?, `tesina`=?, `fechapublicacion`=?, `area` =?, `imagen` =?, `idusuario` =?  WHERE `idproyecto`=?;";
+    var values = [titulo, asesores, objetivo, autores, youtube, tesina, fechapublicacion, area, imagenRuta, userId, idproyecto];
+    
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, values, function (err) {
+                if (err){ //Error al editar
+                    console.log(err)
+                    res.send(false);
+                }else{ //Se editó correctamente
+                    res.send(idproyecto+"");
+                }
+            });
+        }
+        conn.release();
+    });
+
+    
+
+});
+
+app.post('/post/proyectosterminales/edit', (req, res) =>{
+    const idproyecto = req.body.id;
+    const titulo = req.body.titulo;
+    const asesores = req.body.asesores;
+    const autores = req.body.autores;
+    const youtube = req.body.youtube;
+    const fechapublicacion = req.body.fechapublicacion;
+    const area = req.body.area;
+    const objetivo = req.body.objetivo;
+    const tesina = req.body.tesina;
+    const facebookPost = req.body.publicarFacebook;
+    const userId = req.body.userId;
+    
+    console.log("Se solicita modificar sin imagen.")
+            
+    var sql = "UPDATE `proyectosterminales` SET `titulo` = ?, `asesores` = ?, `objetivo`=?, `autores`=?, `youtube`=?, `tesina`=?, `fechapublicacion`=?, `area` =?, `idusuario` =?  WHERE `idproyecto`=?;";
+    var values = [titulo, asesores, objetivo, autores, youtube, tesina, fechapublicacion, area, userId, idproyecto];
+
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sql, values, function (err) {
+                if (err){ //Error al editar
+                    res.send(false);
+                }else{ //Se editó correctamente
+                    res.send(idproyecto+"");
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.delete('/delete/proyectosterminales/item', function (req, res) {
+    const id = req.body.id;
+
+    //Obtener nombre de imagen en base de datos para eliminarla.
+    var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM proyectosterminales WHERE idproyecto= ?;"
+    
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query(sqlImage, id, function (error, results) {
+                if(error){
+                    console.log("Hubo un error.");
+                }else{
+                    if (fs.existsSync("./public/proyectosterminales/" + results[0].imagen)) { //Si el archivo existe
+                        fs.unlink("./public/proyectosterminales/" + results[0].imagen, (err) => {
+                            if (err) {
+                                console.error("No se pudo eliminar la imagen.")
+                            }
+                        });
+                    }
+                    //Eliminar Proyecto terminal
+                    conn.query('DELETE FROM proyectosterminales WHERE idproyecto=?', [id], function (error, results, fields) {
+                        if (error) {
+                            res.status(500).send("Error interno del servidor", error);
+                        } else {
+                            res.send("Proyecto terminal eliminado con éxito");
+                        }
+                    });
+                }    
+                conn.release();
+            });
+        }
+    });
+    
+});
+
+//================================================================================================
+//==================================Termina Proyectos Terminales ===========================================
+//================================================================================================
+
+//===============================================================================================
+//==================================Inicia Lineamientos y Proc ===========================================
+//===============================================================================================
+
+app.get('/get/lineamientosproc', function(req, res){
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM procedimientos', function(error, results){
+                if ( error ){
+                    res.send("error");
+                } else {
+                    res.send(results);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+app.get('/get/lineamientosproc/lineamientoproc-item', function(req, res){
+    const id = req.query.id;
+    db.getConnection((err,conn)=>{
+        if(err){
+            res.send("error");
+        }else{
+            conn.query('SELECT * FROM procedimientos WHERE idprocedimiento=?',[id], function(error, results){
+                if ( error ){    
+                    console.log("error: "+error)
+                    res.status(500).send("Error interno del servidor");
+                } else if(results.length===0){
+                    res.status(404).send("No hay elementos")
+                }else{
+                    res.send(results[0]);
+                }
+            });
+        }
+        conn.release();
+    });
+});
+
+// app.get('/get/lineamientosproc/lineamientoproc-edit', function(req, res){
+//     const id = req.query.id;
+//     db.getConnection((err,conn)=>{
+//         if(err){
+//             res.send("error");
+//         }else{
+//             conn.query('SELECT * FROM procedimientos WHERE idprocedimiento=?',[id], function(error, results){
+//                 if ( error ){
+//                     console.log("error: "+error);
+//                     res.send("error");
+//                 } else {
+//                     res.send(results[0]);
+//                 }
+//             });
+//         }
+//         conn.release();
+//     });
+// });
+
+app.post('/post/lineamientosproc/',uploadLineamientosProc, (req, res) =>{
+    const titulo = req.body.titulo;
+    const descripcion = req.body.descripcion;
+    const userId = req.body.userId;
+
+    console.log("Se solicita agregar un lineamiento y proc.")
+    const host = hostApi+"/lineamientosproc/";
+    
+    const imagenRuta = req.files['imagen'] ? host+'imagenes/'+path.basename(req.files['imagen'][0].path) : null;
+    const pdfRuta = req.files['documento'] ? host+'documentos/'+path.basename(req.files['documento'][0].path) : null;
+    
+
+    var sql = "INSERT INTO procedimientos (titulo, descripcion, imagen, documento, idusuario) VALUES ?";
+    var values = [
+        [titulo, descripcion, imagenRuta, pdfRuta, userId],
+    ];
+
+    db.getConnection((err,conn)=>{
+        if (err) {
+            console.error("Error al conectar a la base de datos:", err);
+            res.send("error");
+            return;
+        }
+        else{
+            conn.query(sql, [values], function (err, result) {
+                if (err){
+                    console.log("Error al publicar lineamiento y proc: "+err);
+                    res.send(false);
+                }else{
+                    console.log("Se agregó un lineamiento y proc: "+result.insertId);
+                    res.send((result.insertId).toString());
+                }
+                conn.release();
+            });
+        }
+    });
+      
+});
+
+app.post('/update/lineamientosproc/', uploadLineamientosProc, function(req, res){
+    const id = req.body.id;
+
+    const titulo = req.body.titulo;
+    const descripcion = req.body.descripcion;
+    const userId = req.body.userId;
+    
+    const host = hostApi + "/lineamientosproc/";
+
+    const imagenRuta = req.files['imagen'] ? host +'imagenes/'+ path.basename(req.files['imagen'][0].path) : null;
+    const pdfRuta = req.files['documento'] ? host +'documentos/'+ path.basename(req.files['documento'][0].path) : null;
+    console.log('Se ha solicitado actualizar')
+    //Obtener nombre de imagen y documento en base de datos para eliminarla.
+    const sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM procedimientos WHERE idprocedimiento= ?;"
+    const sqlDocument = "SELECT SUBSTRING_INDEX(documento, '/', -1) AS documento FROM procedimientos WHERE idprocedimiento= ?;"
+
+    // Obtener el elemento existente de la base de datos
+    db.getConnection((err, conn)=>{
+        if(err){
+            res.status(500).send("Error interno del servidor");
+            return;
+        }
+        conn.query('SELECT * FROM procedimientos WHERE idprocedimiento = ?', [id], function(err, results) {
+            if (err) {
+                console.error("Error al obtener el elemento de la base de datos:", err);
+                res.status(500).send("Error interno del servidor");
+                res.send("error");
+                return;
+            }else if(results.length===0){
+                res.status(404).send("No hay elementos")
+                return
+            }else{    
+                const elementoExistente = results[0];
+                // Comparar y actualizar valores
+                const nuevaImagen = imagenRuta || elementoExistente.imagen;
+                const nuevoPdf = pdfRuta || elementoExistente.documento;
+        
+                // Consultar la ruta de la imagen y el documento actual
+                conn.query(sqlImage,id, function(err, results){
+                    if (err) {
+                        console.error("Error al obtener la imagen de la base de datos:", err);
+                    } else {
+                        const imagenAnterior = results[0].imagen;
+
+                        //Consultar la ruta de documento actual
+                        conn.query(sqlDocument, id, function(err, results) {
+                            if (err) {
+                                console.error("Error al obtener el documento de la base de datos:", err);
+                            } else {
+                                const documentoAnterior = results[0].documento; 
+                                //Actualizar la base de datos
+                                conn.query('UPDATE procedimientos SET titulo=?, descripcion=?, imagen=?, documento=?, idusuario=? WHERE idprocedimiento=?', 
+                                    [titulo, descripcion, nuevaImagen, nuevoPdf, userId, id], (err, result) => {
+                                    if (err){
+                                        console.log("Error al actualizar el elemento: " + err);
+                                        res.send(false);
+                                    } else {
+                                        console.log("Elemento actualizado: " + id);
+                                        if(imagenRuta && imagenAnterior && imagenRuta !== imagenAnterior){
+                                            if (fs.existsSync("./public/lineamientosproc/imagenes/" + imagenAnterior)) {
+                                                fs.unlink("./public/lineamientosproc/imagenes/" + imagenAnterior, (err) => {
+                                                    if (err) {
+                                                        console.error("No se pudo eliminar la imagen.")
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        if (pdfRuta && documentoAnterior && pdfRuta !== documentoAnterior) {
+                                            if (fs.existsSync("./public/lineamientosproc/documentos/" + documentoAnterior)) {
+                                                fs.unlink("./public/lineamientosproc/documentos/" + documentoAnterior, (err) => {
+                                                    if (err) {
+                                                        console.error("No se pudo eliminar el documento.")
+                                                    }
+                                                });
+                                            }  
+                                        }
+                                        res.send(id+"");
+                                    }
+                                    conn.release();
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
+
+app.delete('/delete/lineamientosproc/item', function(req, res){
+    const id = req.body.id;
+    const sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM procedimientos WHERE idprocedimiento= ?;"
+    const sqlDocument = "SELECT SUBSTRING_INDEX(documento, '/', -1) AS documento FROM procedimientos WHERE idprocedimiento= ?;"
+    console.log('Se ha solicitad eliminar')
+    db.getConnection((err, conn)=>{
+        if(err){
+            res.status(500).send("Error interno del servidor");
+            return;
+        }else{
+            conn.query(sqlImage,id, function(err, results){
+                if (err) {
+                    console.error("Error al obtener la imagen de la base de datos:", err);
+                } else {
+                    const imagenAEliminar = results[0].imagen;
+
+                    //Consultar la ruta de documento actual
+                    conn.query(sqlDocument, id, function(err, results) {
+                        if (err) {
+                            console.error("Error al obtener el documento de la base de datos:", err);
+                        } else {
+                            const documentoAEliminar = results[0].documento; 
+                            if (fs.existsSync("./public/lineamientosproc/imagenes/" + imagenAEliminar)) {
+                                fs.unlink("./public/lineamientosproc/imagenes/" + imagenAEliminar, (err) => {
+                                    if (err) {
+                                        console.error("No se pudo eliminar la imagen.")
+                                    }
+                                });
+                            }
+                            if (fs.existsSync("./public/lineamientosproc/documentos/" + documentoAEliminar)) {
+                                fs.unlink("./public/lineamientosproc/documentos/" + documentoAEliminar, (err) => {
+                                    if (err) {
+                                        console.error("No se pudo eliminar el documento.")
+                                    }
+                                });
+                            }
+                            //Eliminar Documento
+                            conn.query('DELETE FROM procedimientos WHERE idprocedimiento=?', [id], function (error, results, fields) {
+                                if (error) {
+                                    res.status(500).send("Error interno del servidor", error);
+                                } else {
+                                    res.send("Documento eliminado con éxito");
+                                }
+                            });
+                        }
+                        conn.release();
+                    })
+                }
+            })
+        }
+    })
+})
+
+// app.post('/post/lineamientosproc/noimage', (req, res) =>{
+//     const titulo = req.body.titulo;
+//     const descripcion = req.body.descripcion;
+//     const enlace = req.body.enlace;
+//     const facebookPost = req.body.publicarFacebook;
+//     const userId = req.body.userId;
+
+//     console.log("Se solicita agregar un lineamiento y proc sin imagen.")
+    
+//     var sql = "INSERT INTO procedimientos (titulo, descripcion, enlace, idusuario) VALUES ?";
+//     var values = [
+//         [titulo, descripcion, enlace, userId],
+//     ];
+
+//     db.getConnection((err,conn)=>{
+//         if(err){
+//             res.send("error");
+//         }else{
+//             conn.query(sql, [values], function (err, result) {
+//                 if (err){
+//                     console.log("Error al publicar lineamiento y proc sin imagen: "+err);
+//                     res.send(false);
+//                 }else{
+//                     console.log("Se agregó un lineamiento y proc sin imagen: "+result.insertId);
+//                     res.send((result.insertId).toString());
+//                 }
+//             });
+//         }
+//         conn.release();
+//     });
+      
+//     //Publicar en facebook
+
+//     //if(facebookPost){
+//     //    facebookImagePost(msgNuevoSeminario, fbImagenRuta);
+//     //}
+    
+// });
+
+// app.post('/post/lineamientosproc/edit/image',uploadLineamientosProc.single("imagen"), (req, res) =>{
+//     const idprocedimiento = req.body.id;
+//     const titulo = req.body.titulo;
+//     const descripcion = req.body.descripcion;
+//     const enlace = req.body.enlace;
+//     const facebookPost = req.body.publicarFacebook;
+//     const userId = req.body.userId;
+    
+//     console.log("Se solicita modificar con imagen.")
+//     const host = hostApi+"/lineamientosproc/";
+//     const imagenRuta = host + path.basename(req.file.path);
+//     //Obtener nombre de imagen en base de datos para eliminarla.
+//     var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM procedimientos WHERE idprocedimiento= ?;"
+    
+//     db.getConnection((err,conn)=>{
+//         if(err){
+//             res.send("error");
+//         }else{
+//             conn.query(sqlImage, idprocedimiento, function (error, results) {
+//                 if(error){
+//                     console.log("Hubo un error.");
+//                 }else{
+//                     if (fs.existsSync("./public/lineamientosproc/" + results[0].imagen)) { //Si el archivo existe
+//                         fs.unlink("./public/lineamientosproc/" + results[0].imagen, (err) => {
+//                             if (err) {
+//                                 console.error("No se pudo eliminar la imagen.")
+//                             }
+//                         });
+//                     }
+//                 }    
+//             });
+//         }
+//         conn.release();
+//     });
+
+            
+//     var sql = "UPDATE `procedimientos` SET `titulo` = ?, `descripcion` = ?, `imagen` =?, `enlace`=?, `idusuario`=?  WHERE `idprocedimiento`=?;";
+//     var values = [titulo, descripcion, imagenRuta, enlace, userId, idprocedimiento];
+    
+//     db.getConnection((err,conn)=>{
+//         if(err){
+//             res.send("error");
+//         }else{
+//             conn.query(sql, values, function (err) {
+//                 if (err){ //Error al editar
+//                     console.log(err)
+//                     res.send(false);
+//                 }else{ //Se editó correctamente
+//                     res.send(idprocedimiento+"");
+//                 }
+//             });
+//         }
+//         conn.release();
+//     });
+
+// });
+
+// app.post('/post/lineamientosproc/edit', (req, res) =>{
+//     const idprocedimiento = req.body.id;
+//     const titulo = req.body.titulo;
+//     const descripcion = req.body.descripcion;
+//     const enlace = req.body.enlace;
+//     const facebookPost = req.body.publicarFacebook;
+//     const userId = req.body.userId;
+    
+//     console.log("Se solicita modificar sin imagen.")
+            
+//     var sql = "UPDATE `procedimientos` SET `titulo` = ?, `descripcion` = ?, `enlace`=?, `idusuario`=?  WHERE `idprocedimiento`=?;";
+//     var values = [titulo, descripcion, enlace, userId, idprocedimiento];
+    
+//     db.getConnection((err,conn)=>{
+//         if(err){
+//             res.send("error");
+//         }else{
+//             conn.query(sql, values, function (err) {
+//                 if (err){ //Error al editar
+//                     res.send(false);
+//                 }else{ //Se editó correctamente
+//                     res.send(idseminario+"");
+//                 }
+//             });
+//         }
+//         conn.release();
+//     });  
+
+// });
+
+// app.delete('/delete/lineamientosproc/item', function (req, res) {
+//     const id = req.body.id;
+
+//     //Obtener nombre de imagen en base de datos para eliminarla.
+//     var sqlImage = "SELECT SUBSTRING_INDEX(imagen, '/', -1) AS imagen FROM procedimientos WHERE idprocedimiento= ?;"
+    
+//     db.getConnection((err,conn)=>{
+//         if(err){
+//             res.send("error");
+//         }else{
+//             conn.query(sqlImage, id, function (error, results) {
+//                 if(error){
+//                     console.log("Hubo un error.");
+//                 }else{
+//                     if (fs.existsSync("./public/lineamientosproc/" + results[0].imagen)) { //Si el archivo existe
+//                         fs.unlink("./public/lineamientosproc/" + results[0].imagen, (err) => {
+//                             if (err) {
+//                                 console.error("No se pudo eliminar la imagen.")
+//                             }
+//                         });
+//                     }
+//                     //Eliminar Documento
+//                     conn.query('DELETE FROM procedimientos WHERE idprocedimiento=?', [id], function (error, results, fields) {
+//                         if (error) {
+//                             res.status(500).send("Error interno del servidor", error);
+//                         } else {
+//                             res.send("Evento eliminado con éxito");
+//                         }
+//                     });
+//                 }    
+//                 conn.release();
+//             });
+//         }
+//     }); 
+// });
+
+//================================================================================================
+//==================================Termina Lineamientos y Proc ===========================================
+//================================================================================================
+
+app.post('/post/sugerencia', (req, res) =>{
+    const nombre = req.body.nombre;
+    const correo = req.body.correo;
+    const sugerencia = req.body.sugerencia;
+    
+    console.log("Nueva sugerencia.")
+            
+    var sql = "INSERT INTO sugerencias (nombre, descripcion, contacto) VALUES ?";
+    var values = [
+        [nombre, sugerencia, correo],
+    ];
+
+    db.getConnection((err,conn)=>{
+        if(err){
+            console.log("Error al publicar sugerencia: "+err);
+            res.send(false);
+        }else{
+            conn.query(sql, [values], function(error, results){
+                if ( error ){
+                    res.status(500).send(false)
+                    console.log("Error al publicar sugerencia: "+err);
+                } else {
+                    console.log("Se agregó una sugerencia.");
+                    res.status(200).send(true);
+                }
+            });
+        }
+        conn.release();
+    });
+    
+
+});
+
+
+const getYoutubeVideoId = (url) => {
+    var ID = '';
+    url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+    if (url[2] !== undefined) {
+        ID = url[2].split(/[^0-9a-z_\-]/i);
+        ID = ID[0];
+    }
+    else {
+        ID = url;
+    }
+    return ID;
+}
+
+const facebookImagePost = (msg, imgPath) =>{
+    console.log("Pide fb");
+    // FB.setAccessToken(ACCESS_TOKEN_PAGE);
+
+    // FB.api(namePage + '/photos', 'post', { source: fs.createReadStream(imgPath), caption: msg }, function (res) {
+    //     if (!res || res.error) {
+    //         console.log(!res ? 'error occurred' : res.error);
+    //     }
+    //     console.log('Post Id: ' + res.post_id);
+    // });
+}
+
+ app.use(express.static('public'));
+
+app.listen(3001, () => {
+   console.log("El servidor está corriendo.");
+});

@@ -1,0 +1,108 @@
+/* Main Header */
+#top-nav{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+    padding: 1.875rem var(--main-space);
+    background-color: var(--uam-color);
+    color: var(--white);
+}
+#titulo-nav-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#titulo-nav-container a{
+    color: var(--white);
+    text-decoration: none;
+}
+#titulo-nav-container a>h1{
+    font-size: var(--depto-size);
+    font-weight: normal;
+}
+.session-btn{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: none;
+    background-color: transparent;
+    color: var(--white);
+    transition: all 0.25s;
+    gap: 0.5rem;
+}
+.session-btn:hover{
+    color: var(--hover-text);
+}
+.session-btn:hover>svg{
+    fill: var(--hover-text);
+    transition: all 0.25s;
+}
+.session-btn>svg{
+    height: 25px;
+    fill: var(--white);
+}
+#session-nav-container{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.session-adm{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: none;
+    background-color: transparent;
+    color: var(--white);
+    transition: all 0.25s;
+    gap: 0.5rem;
+}
+.session-adm:hover{
+    color: var(--hover-text);
+}
+.session-adm:hover>svg{
+    fill: var(--hover-text);
+    transition: all 0.25s;
+}
+.session-adm>svg{
+    height: 25px;
+    fill: var(--white);
+}
+
+#top-nav-adm{
+    display: grid;
+    grid-template-columns:1fr 200px;
+    padding: 1.875rem var(--main-space);
+    background-color: transparent;
+    color: var(--white);
+}
+#titulo-nav-container-adm{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#session-nav-container-adm{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.session-btn-adm{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: none;
+    background-color: transparent;
+    color: var(--uam-color); 
+    transition: all 0.1s;
+    gap: 0.5rem;
+}
+.session-btn-adm:hover{
+    color: var(--hover-text);
+}
+.session-btn-adm:hover>svg{
+    fill: var(--hover-text);
+    transition: all 0.1s;
+}
+.session-btn-adm>svg{
+    height: 25px;
+    fill: var(--white);
+}

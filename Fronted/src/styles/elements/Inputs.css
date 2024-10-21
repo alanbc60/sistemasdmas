@@ -1,0 +1,63 @@
+.input-text{
+    height: 50px;
+}
+.label-text{
+    position: relative;
+    width: 100%; 
+    max-width: 21.875rem;
+}
+.label-text input, .text-area-input{
+    padding-left: 1rem;
+    background: transparent;
+    border: .1875rem solid var(--hover-text);
+    border-radius: .75rem;
+    width: 100%;
+    margin-top: .625rem;
+}
+.label-text input:focus, .text-area-input:focus{
+    border: 3px solid var(--uam-color-light);
+    outline: none;
+}
+.label-text span{
+    position: absolute;
+    left: 10px;
+    pointer-events: none;
+    translate: 0 50%;
+    padding: 4px 8px;
+    transition: 0.3s;
+    background: transparent;
+    color: var(--hover-text);
+}
+.label-text span.has-value{
+    color: var(--uam-color);
+    translate: 0 -35%;
+    background: var(--white);
+    font-size: 14px;
+}
+
+/* Text Area */
+.text-area-container{
+    width: 100%;
+    position: relative;
+    max-width: 750px;
+}
+.text-area-input:focus{
+    border: 3px solid var(--uam-color-light);
+}
+.text-area-container span{
+    position: absolute;
+    top: 0;
+    left: 10px;
+    pointer-events: none;
+    translate: 0 50%;
+    padding: 0 10px;
+    transition: 0.3s;
+    background: transparent;
+    color: var(--hover-text);
+}
+.text-area-container span.has-value{
+    color: var(--uam-color);
+    translate: 0 -30%;
+    background: var(--white);
+    font-size: 14px;
+}
