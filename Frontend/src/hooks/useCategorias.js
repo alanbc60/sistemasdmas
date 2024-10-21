@@ -151,7 +151,7 @@ export const useVerItem = (categoria, item)=>{
         } finally{
             setLoadingVer(false)
         }
-    },[]);
+    },[buildURL, categoria, item]);
     
     useEffect(()=>{
         getData();
@@ -170,7 +170,6 @@ export const useCategoriasMenu = (categoria)=>{
     
     const getMenuData = useCallback(async()=>{
         if (categoria === 'seminarios') {
-            console.log("entro a seminarios");
             console.log(host+`:3001/get/seminarios/expositores`);
             try {
                 setMenuLoading(true);     
@@ -251,12 +250,43 @@ export const useCategoriasMenu = (categoria)=>{
     return {arrMenu, loadingMenu, getMenuData, filtrarPorKey, filtrarPorLabel, mostrarArea, arrOrdenarPor}
 }
 
-export const useCateriasGrid = (categoria)=>{
+export const useCategoriasGrid = (categoria)=>{
     const [arrGrid, setArrGrid] = useState(null);
     const [loadingArrGrid, setLoadingArrGrid]=useState(false)
     const [sorted, setSorted] = useState(1);
     const [proxSeminario, setProxSeminario] = useState([]);
     const [loadingProxSeminario, setLoadingProxSeminario] = useState(false);
+
+    console.log("Categoria de useCategoriasGrid: "+categoria);
+
+    const getProxSeminario = useCallback( async()=>{
+        if(categoria==='seminarios'){
+            try {
+                setLoadingProxSeminario(true);
+                const response = await axios.get(host+`:3001/get/seminarios/mas-proximo`);
+                const result = response.data
+                const mappedResults = {
+                    id: result.idseminario,
+                    titulo: result.titulo,
+                    imagen: result.imagen?result.imagen:defaultSeminarios,
+                    responsable: result.expositor,
+                    resumen: result.resumen,
+                    semblanza: result.semblanza,
+                    fecha: result.fecha,
+                    youtube: result.youtube
+                }
+                setProxSeminario(mappedResults)
+            } catch (error) {
+                console.log('Error al obtener próximo seminario: '+error.message)
+            }finally{
+                setLoadingProxSeminario(false)
+            }
+        }else{
+            setProxSeminario(null)
+            setLoadingProxSeminario(false)
+        }
+    },[categoria])
+
 
     const getGridData = useCallback(async()=>{
         if (categoria === 'seminarios') {
@@ -544,6 +574,8 @@ export const useCateriasGrid = (categoria)=>{
     },[categoria])
 
     const pathItem = useMemo(()=>{
+        console.log("Entro al pathItem del grid");
+        console.log("categoria en memo: "+categoria);
         if (categoria === 'seminarios') {
             return  '/seminarios/'
         } else if (categoria === 'proyectosinvestigacion') {
@@ -558,6 +590,8 @@ export const useCateriasGrid = (categoria)=>{
             return'/lineamientosproc/'
         } 
     },[categoria])
+
+    console.log("pathItem del grid: "+pathItem);
 
     const deleteItem = useCallback(async(item)=>{
         const {titulo, id, responsable} = item;
@@ -728,36 +762,7 @@ export const useCateriasGrid = (categoria)=>{
                 }
             }
         })
-    },[categoria, header, getGridData])
-
-    
-    const getProxSeminario = useCallback( async()=>{
-        if(categoria==='seminarios'){
-            try {
-                setLoadingProxSeminario(true);
-                const response = await axios.get(host+`:3001/get/seminarios/mas-proximo`);
-                const result = response.data
-                const mappedResults = {
-                    id: result.idseminario,
-                    titulo: result.titulo,
-                    imagen: result.imagen?result.imagen:defaultSeminarios,
-                    responsable: result.expositor,
-                    resumen: result.resumen,
-                    semblanza: result.semblanza,
-                    fecha: result.fecha,
-                    youtube: result.youtube
-                }
-                setProxSeminario(mappedResults)
-            } catch (error) {
-                console.log('Error al obtener próximo seminario: '+error.message)
-            }finally{
-                setLoadingProxSeminario(false)
-            }
-        }else{
-            setProxSeminario(null)
-            setLoadingProxSeminario(false)
-        }
-    },[categoria])
+    },[categoria, header, getGridData, getProxSeminario])
 
 
     return {updateSorted, arrGrid: getSortedGrid, getGridData, 

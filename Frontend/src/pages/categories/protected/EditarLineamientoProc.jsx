@@ -2,15 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams} from "react-router-dom";
 import { useForm} from "react-hook-form";
 import axios from 'axios';
-import {host} from '../../data/host';
-import toggleLogin from '../../redux/actions/toggleLogin';
+import {host} from '../../../data/host';
+import toggleLogin from '../../../redux/actions/toggleLogin';
 import { connect } from 'react-redux';
-import { Loading } from "../../elements/Loading";
+import { Loading } from "../../../elements/Loading";
 import { Col, Row, Container, Form } from "react-bootstrap";
-import defaultDocumento from '../../assets/defaultimages/defaultDocumento.png';
+import defaultDocumento from '../../../assets/defaultimages/defaultDocumento.png';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Swal from 'sweetalert2';
-import VistaPreviaImagen from "./VistaPreviaImagen";
+import VistaPreviaImagen from "../protected/VistaPreviaImagen";
 
 function EditarLineamientoProc(props) {
   

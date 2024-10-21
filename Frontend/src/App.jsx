@@ -1,4 +1,4 @@
-// src/App.jsx
+
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -13,14 +13,25 @@ import AcercaDe from './pages/AcercaDe';
 import QuinesSomos from './pages/quienesSomos';
 
 
+// Categorias
+import Seminarios from './pages/categories/Seminarios';
+import Eventos from './pages/categories/Eventos';
+import LineamientosProc from './pages/categories/LineamientosProc';
+import ProyectosInvestigacion from './pages/categories/ProyectosInvestigacion';
+import ProyectosTerminales from './pages/categories/ProyectosTerminales';
+import Publicaciones from './pages/categories/Publicaciones';
+
+
+
+
 // rutas protegidas
 import ProtectedRoute from './components/validations/ProtectedRoute';
-import EditarSeminario from './pages/categories/EditarSeminario';
-import EditarEvento from './pages/categories/EditarEvento';
-import EditarLineamientoProc from './pages/categories/EditarLineamientoProc';
-import EditarProyectoInvestigacion from './pages/categories/EditarProyectoInvestigacion';
-import EditarProyectoTerminal from './pages/categories/EditarProyectoTerminal';
-import EditarPublicacion from './pages/categories/EditarPublicacion';
+import EditarSeminario from './pages/categories/protected/EditarSeminario';
+import EditarEvento from './pages/categories/protected/EditarEvento';
+import EditarLineamientoProc from './pages/categories/protected/EditarLineamientoProc';
+import EditarProyectoInvestigacion from './pages/categories/protected/EditarProyectoInvestigacion';
+import EditarProyectoTerminal from './pages/categories/protected/EditarProyectoTerminal';
+import EditarPublicacion from './pages/categories/protected/EditarPublicacion';
 
 // rutas admin
 import Login from './pages/Login';
@@ -48,17 +59,17 @@ function App() {
             <Route path='/acercade' element={<AcercaDe />} />
             <Route path='/quienessomos' element={<QuinesSomos />} />
 
-            {/* rutas de secciones */}
-            <Route path='/seminarios' element={<Home />} />
-            <Route path='/' element={<Home />} />
-            <Route path='/' element={<Home />} />
-            <Route path='/' element={<Home />} />
-            <Route path='/' element={<Home />} />
-            <Route path='/' element={<Home />} />
+
+            {/* Categorias */}
+            <Route path='/seminarios' element={<Seminarios/>}/>
+            <Route path='/eventos' element={<Eventos/>}/>
+            <Route path='/lineamientosproc' element={<LineamientosProc/>}/>
+            <Route path='/proyectosinvestigacion' element={<ProyectosInvestigacion/>}/>
+            <Route path='/proyectosterminales' element={<ProyectosTerminales/>}/>
+            <Route path='/publicaciones' element={<Publicaciones/>}/>
 
 
             {/* ruteo */}
-
             <Route exact path='/login' element={<Login/>}/> 
 
             <Route element={<ProtectedRoute/>}>  

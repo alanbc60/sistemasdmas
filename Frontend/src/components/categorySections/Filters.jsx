@@ -1,10 +1,10 @@
 import Select from 'react-select';
-import filterSubject from '../data/dropdownSubject.json'
+import filterSubject from '../../data/dropdownSubject.json'
 import { Container, Form, Row } from 'react-bootstrap';
-import {ShortLoading} from './Loading';
+import {ShortLoading} from '../../elements/Loading';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useState } from 'react';
-import { SubmitInput } from './Buttons';
+import { SubmitInput } from '../../elements/Buttons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 

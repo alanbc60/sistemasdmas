@@ -1,7 +1,4 @@
-// usando EsModules
-
-
-import mysql from 'mysql2/promise';
+import mysql from 'mysql2';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
@@ -10,6 +7,7 @@ import session from 'express-session';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+
 
 // Variables globales
 const host = "http://localhost:5173"; // Host para pruebas en máquina local Vite frontend
@@ -56,51 +54,35 @@ app.use(
 // Aplicaciones web o servicios con alto tráfico.
 // Cuando necesitas reutilizar conexiones para reducir la latencia.
 
-
-// Configuración de la conexión
-const poolDB = mysql.createPool({
-    waitForConnections: true, // La solicitud espera en una cola hasta que una conexión se libere
-    connectionLimit: 10, // El limite de conexiones simultaneas
-    host: "148.206.168.33",
-    user: "adminUser",
-    password: "X22muy2Dqw,q",
-    database: "dmas",
-    port: "3306"
-})
-
-// Probar la conexión
-poolDB.getConnection((err, connection) => {
-    if (err) {
-      console.error('Error al conectar a la base de datos:', err);
-      return;
-    }
-    console.log('Conexión exitosa a la base de datos');
-    connection.release(); // Libera la conexión
-});
-
-
+  
 
 // Inicia el servidor
 const PORT = 3001;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en ${hostApi}`);
+    console.log('Servidor corriendo en', {hostApi});
 });
 
+console.log('servidor escuchado');
 
-const getYoutubeVideoId = (url) => {
-    var ID = '';
-    url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-    if (url[2] !== undefined) {
-        ID = url[2].split(/[^0-9a-z_-]/i);
-        ID = ID[0];
-    }
-    else {
-        ID = url;
-    }
-    return ID;
-}
+// Configuración de la conexión
+const poolDB = mysql.createPool({
+    connectionLimit: 10, // El límite de conexiones simultáneas
+    host: "148.206.168.33",
+    user: "adminUser",
+    password: "X22muy2Dqw,q",
+    database: "dmas_r",
+    port: "3306"
+});
 
-
+// Prueba la conexión
+// poolDB.getConnection((err, connection) => {
+//     if (err) {
+//         console.error('Error en la conexión al pool:', err);
+//     } else {
+//         console.log('Conexión exitosa al pool');
+//         connection.release(); // Libera la conexión después de la prueba
+//     }
+// });
 
 
 //=================Inicia Configuración de almacenamiento de imágenes ============================
@@ -205,39 +187,44 @@ app.get('/get/login', (req, res) => {
 })
 
 app.post('/post/login', (req, res) => {
-    const username = req.body.username;
+    // console.log(req);
+    const mail = req.body.mail;
     const password = req.body.password;
-    console.log("Intento de inicio de sesión | user: " + username + " pass: " + password);
-    poolDB.getConnection((err, conn) => {
-        if (err) {
+    console.log("Intento de inicio de sesión | user: "+mail+" pass: "+password);
+    
+    poolDB.getConnection((err,conn)=>{
+        
+        if(err){
             res.send("error");
-        } else {
-            conn.query('SELECT * FROM usuarios WHERE BINARY mail = ? AND BINARY password = ? ;', [username, password],
-                (err, result) => {
-                    if (err) {
-                        console.log('Inicio de sesión sin éxito: ' + err);
-                        res.status(500).send("Error interno del servidor");
-                    }
-                    else if (result.length > 0) {
-                        console.log("Guardo " + result[0].idusuario + " en cookie.")
-                        req.session.user = true;
-                        console.log("sesion: " + req.session);
-                        console.log('Inicio de sesión con éxito');
-                        res.send(result);
-                    } else if (result.length === 0) {
-                        res.status(404).send("No hay elementos")
-                    }
-                    else {
-                        console.log('Error desconocido al iniciar sesión');
-                        res.send("error");
-                    }
-                    conn.release();
-                });
+        }else{
+            conn.query('SELECT * FROM usuarios WHERE BINARY mail = ? AND BINARY password = ? ;',[ mail, password ],
+            (err, result) => {
+                if(err){
+                    console.log('Inicio de sesión sin éxito: '+err);
+                    res.status(500).send("Error interno del servidor");
+                }
+                else if(result.length>0){
+                    console.log("si hay resultados");
+                    console.log("Guardo "+result[0].idusuario+" en cookie.")
+                    req.session.user = true;
+                    console.log("sesion: "+req.session);
+                    console.log('Inicio de sesión con éxito');
+                    res.send(result);
+                }else if(result.length===0){
+                    res.status(404).send("No hay elementos")
+                }
+                else{
+                    console.log('Error desconocido al iniciar sesión');
+                    res.send("error");
+                }
+                conn.release();
+            });
         }
     });
 });
 
 app.post('/post/logout', (req, res) => {
+    console.log("Cierre de sesión");
     req.session.destroy((err) => {
         if (err) {
             console.log(err);
@@ -249,6 +236,273 @@ app.post('/post/logout', (req, res) => {
 });
 
 // ================== Termina Configuración de sesiones ============================
+
+//===============================================================================================
+//==================================Inicia  ADMINISTRADOR ===========================================
+//===============================================================================================
+
+
+app.get('/usuarios', async function(req, res){
+    poolDB.getConnection((err, conn) => {
+        //console.log(conn);
+        if(err){
+            res.send("error");
+        } else {
+            conn.query('SELECT * FROM usuarios', function(error, results){
+                if(error){
+                  return res.status(500).json({ message: 'Error interno del servidor' });
+                }else if (results.length === 0){
+                    return res.status(404).json({ message: 'No hay elementos' });
+                }
+                else{
+                   return res.status(200).json(results);
+                }
+                // Cierra la conexión
+                
+               
+            });
+            // Libera la conexión aquí
+            conn.release();
+        }
+    });
+})
+
+app.get("/obtenerUsuario/:correo", (req, res) => {
+  const ID_NOT_FOUND = 'Usuario no encontrado';
+  const INTERNAL_SERVER_ERROR = 'Error interno del servidor';
+
+  const sql = "SELECT * FROM usuarios WHERE mail = ?";
+  const correo = req.params.correo;
+
+  poolDB.getConnection((err, conn) => {
+    if (err) {
+      return res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+    }
+    else {
+      conn.query(sql, [correo], (err, result) => {
+        if (err) {
+          res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+        }
+        else if (result.length === 0) {
+          res.status(200).json({ status: 'no_encontrado', message: ID_NOT_FOUND });
+        }
+        else {
+          res.status(200).json({
+            status: 'encontrado',
+            datos: result
+          });
+        }
+        conn.release();
+      });
+    }
+  });
+});
+
+app.get("/verificarCorreoExistente/:correo/:id", (req, res) => {
+    const ID_NOT_FOUND = 'Usuario no encontrado';
+    const INTERNAL_SERVER_ERROR = 'Error interno del servidor';
+  
+    const sql = "SELECT * FROM usuarios WHERE mail = ? AND idusuario != ?";
+    const correo = req.params.correo;
+    const id = req.params.id;
+
+    poolDB.getConnection((err, conn) => {
+      if (err) {
+        return res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+      }
+      else {
+        conn.query(sql, [correo,id], (err, result) => {
+          if (err) {
+            res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+          }
+          else if (result.length === 0) {
+            res.status(200).json({ status: 'correo_no_vinculado', message: ID_NOT_FOUND });
+          }
+          else {
+            res.status(200).json({
+              status: 'encontrado',
+              datos: result
+            });
+          }
+          conn.release();
+        });
+      }
+    });
+  });
+
+// obtener un usuario
+app.get("/obtenerUsuarioEspecifico/:idUsuario", (req, res) => {
+  const INTERNAL_SERVER_ERROR = 'Error interno del servidor';
+
+  const sql = "SELECT * FROM usuarios WHERE idusuario = ?";
+  const id = parseInt(req.params.idUsuario);
+
+  poolDB.getConnection((err, conn) => {
+    if (err) {
+      return res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+    }
+    else {
+      conn.query(sql, [id], (err, result) => {
+        if (err) {
+          res.status(500).json({ status: 'error', message: INTERNAL_SERVER_ERROR });
+        }
+        else if (result.length === 0) {
+          res.status(404).json({ status: 'no_encontrado', message: 'Usuario no encontrado' });
+        }
+        else {
+          res.status(200).json({
+            status: 'encontrado',
+            datos: result
+          });
+        }
+        conn.release();
+      });
+    }
+  })
+});
+
+
+
+app.post("/registrarUsuario", (req, res) => {
+  const sql = "INSERT INTO usuarios (nombre,apaterno,amaterno,mail, password) VALUES (?, ?, ?, ?, ?)";
+
+  // lo obtenemos de los name del formulario
+  const nombre = req.body.nombre;
+  const apaterno = req.body.apaterno;
+  const amaterno = req.body.amaterno;
+  const mail = req.body.mail;
+  const password = req.body.password;
+
+  // Utiliza pool de conexiones en lugar de createConnection
+  poolDB.query(sql, [nombre, apaterno, amaterno, mail, password], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: 'Error al registrar el usuario' });
+    } else {
+      console.log(result);
+      return res.status(201).json({ message: 'Usuario registrado exitosamente' });
+    }
+  });
+});
+
+
+app.delete("/eliminarUsuario/:idUsuario", async (req, res) => {
+  const id = parseInt(req.params.idUsuario);
+  try {
+    // Obtener nombres de todas las tablas
+    poolDB.query('SHOW TABLES', async (err, tables) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Error interno del servidor', dato: typeof (id) });
+      }
+
+      // Iterar sobre las tablas
+      for (const tableRow of tables) {
+        const tableName = Object.values(tableRow)[0];
+
+        // Consulta para verificar la relación en cada tabla
+        const verificarRelacionQuery = `
+          SELECT COUNT(*)
+          FROM information_schema.table_constraints AS tc
+          JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name
+          WHERE tc.constraint_type = 'FOREIGN KEY' AND kcu.table_name = ? AND kcu.column_name = 'idusuario'
+            AND EXISTS (
+                SELECT 1
+                FROM ${tableName}
+                WHERE idusuario = ?
+            )`;
+
+        // Ejecutar la consulta
+        poolDB.query(verificarRelacionQuery, [tableName, id], async (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).json({ message: 'Error interno del servidor', dato: typeof (id) });
+          }
+
+          const cont = result[0]['COUNT(*)'];
+          if (cont > 0) {
+            //console.log("Se encontro relacion con la tabla: " + tableName);
+            const sqlUpdate = `UPDATE ${tableName} SET idusuario = 1 WHERE idusuario = ?`;
+
+            // Ejecutar la actualización
+            poolDB.query(sqlUpdate, [id], (err, result) => {
+              if (err) {
+                console.log(err);
+                return res.status(500).json({ message: 'Error interno del servidor', dato: typeof (id) });
+              } else {
+                console.log(result);
+              }
+            });
+          }
+
+        });
+      }
+
+      console.log("Eliminando Usuario...");
+      const sqlDelete = "DELETE FROM usuarios WHERE idusuario = ?";
+
+      // Ejecutar la eliminación
+      poolDB.query(sqlDelete, [id], (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ message: 'Error interno del servidor', dato: typeof (id) });
+        } else {
+          console.log(result);
+          return res.status(201).json({ message: 'Usuario eliminado exitosamente', dato: id });
+        }
+      });
+
+      // Enviar resultados como respuesta JSON
+      //res.json(resultados);
+    });
+  } catch (error) {
+    console.error('Error:', error.message);
+    // Enviar un error como respuesta JSON
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+
+app.post("/eliminarGrupoUsuarios", (req, res) => {
+  const sql = "DELETE FROM usuarios WHERE (id,nombre,mail) VALUES (?, ?, ?)";
+
+  const id = req.body.id;
+  const nombre = req.body.nombre;
+  const email = req.body.email;
+
+  // Utiliza pool de conexiones en lugar de createConnection
+  poolDB.query(sql, [id, nombre, email], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: 'Error interno del servidor' });
+    } else {
+      console.log(result);
+      return res.status(201).json({ message: 'Usuario eliminado exitosamente' });
+    }
+  });
+});
+
+app.put("/actualizarUsuario/:idUsuario", (req, res) => {
+  const sql = "UPDATE usuarios SET nombre = ?, apaterno = ?, amaterno = ?, mail = ?, password = ? WHERE idusuario = ?";
+
+  const nombre = req.body.nombre;
+  const apaterno = req.body.apaterno;
+  const amaterno = req.body.amaterno;
+  const email = req.body.mail;
+  const password = req.body.password;
+  const id = req.params.idUsuario; // Accede al id desde los parámetros de la URL
+
+  poolDB.query(sql, [nombre, apaterno, amaterno, email, password, id], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: 'Error al actualizar el usuario' });
+    } else {
+      console.log(result);
+      return res.status(201).json({ message: 'Usuario actualizado exitosamente' });
+    }
+  })
+});
+
 
 
 //===============================================================================================
@@ -308,8 +562,6 @@ app.get('/get/seminarios/mas-proximo', function(req, res){
         conn.release();    
     });
 });
-
-
 
 
 app.get('/get/seminarios/filtrar', function(req, res){
@@ -409,8 +661,6 @@ app.get('/get/seminarios/expositores', function(req, res){
     });
     
 });
-
-
 
 
 app.post('/post/seminarios/',uploadSeminarios.single("imagen"), (req, res) =>{
@@ -603,10 +853,6 @@ app.delete('/delete/seminarios/item', function (req, res) {
 //================================================================================================
 //==================================Termina Seminarios ===========================================
 //================================================================================================
-
-
-
-
 
 
 
@@ -2088,4 +2334,7 @@ app.delete('/delete/lineamientosproc/item', function (req, res) {
         }
     })
 })
+
+
+
 

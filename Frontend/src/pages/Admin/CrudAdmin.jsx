@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import Usuario from '../../components/adminSections/Usuario';
 import { AdminLoader } from '../../hooks/useAdmin';
@@ -37,7 +38,7 @@ function CrudAdmin(props) {
       cancelButtonText: 'No',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        if (props.logged.state) {
+        if (props.logged) {
           console.log("entro a la validacion session encontrada");
           try {       
             const getLogout = async () => {
@@ -135,7 +136,7 @@ function CrudAdmin(props) {
 
   return (
     <>
-      <div id='top-nav-adm' className=''>
+      <div id='top-nav-adm' className='min-w-[500px]'>
         <div id='titulo-nav-container-adm' className='flex items-center justify-center'>
           <h1 className="font-black text-4xl text-orange-500 text-center z-1">Usuarios DMAS</h1>
         </div>

@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react'
 import { useEffect, useRef, useState } from "react";
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faChevronDown, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faBars, faUserTie, faChevronDown } from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +13,7 @@ import toggleLogin from '../../redux/actions/toggleLogin';
 import { ShortLoading } from '../../elements/Loading';
 import { faCircleUser } from '@fortawesome/free-regular-svg-icons';
 import Swal from 'sweetalert2';
+
 
 // datos de entrada
 
@@ -27,12 +28,23 @@ function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const location = useLocation();
+
   // Acceder al estado global del usuario logueado
   const logged = useSelector((state) => state.logged); // Accede al reducer 'logged'
 
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
+
+    // actualizar el indice de la sección activa
+    const path = location.pathname;
+    const index = sections.findIndex((section) => `/${section.to}` === path);
+    if (index !== -1) {
+      setActiveIndex(index);
+    }
+
+
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
@@ -159,7 +171,9 @@ function Header() {
         <nav className={`lg:flex justify-center large:py-6 ${menuHamburguerOpen ? 'block' : 'hidden'} lg:block`}>
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 text-gray-700 text-center ">
             {sections.slice(0, -1).map((e, index) => (
+              
               index !== 1 ? (
+                console.log(e.title),
                 <NavLink
                   key={`section-${index}`}
                   to={`/${e.to}`}

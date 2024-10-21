@@ -2,15 +2,15 @@
 import React from 'react'
 import PropTypes from 'prop-types';
 
-import { useCategoriasMenu, useCateriasGrid } from '../../hooks/useCategorias';
+import { useCategoriasMenu, useCategoriasGrid } from '../../hooks/useCategorias';
 import { useEffect } from 'react';
 
 
-import { FilterSection } from '../../elements/Filters';
-import { GridConteiner } from '../../elements/Grid';
+import { FilterSection } from '../../components/categorySections/Filters';
+import { GridConteiner } from '../../components/categorySections/Grid';
 import { Loading } from '../../elements/Loading';
 import { ButtonNav } from '../../elements/Buttons';
-import { ProximoSeminario } from '../../pages/Seminarios/ProxSeminario';
+import { ProximoSeminario } from '../../components/categorySections/Seminarios/ProxSeminario';
 /**
  * 
  * @param {string, bool} 
@@ -21,6 +21,10 @@ import { ProximoSeminario } from '../../pages/Seminarios/ProxSeminario';
  * para obtener el contenido de acuerdo a cada categoria
  */
 export default function CategoriasBody({ categoria, loginState }) {
+
+    // console.log("categoria: "+categoria)
+    // console.log("loginState: "+loginState)
+
     const { arrMenu, loadingMenu,
         getMenuData, filtrarPorKey,
         filtrarPorLabel, mostrarArea,
@@ -29,7 +33,9 @@ export default function CategoriasBody({ categoria, loginState }) {
     const { arrGrid, getGridData, loadingArrGrid,
         pathItem, updateSorted, getFilteredGridData,
         header, deleteItem, proxSeminario,
-        loadingProxSeminario, getProxSeminario } = useCateriasGrid(categoria);
+        loadingProxSeminario, getProxSeminario } = useCategoriasGrid(categoria);
+
+    console.log("pathItem: "+pathItem);
 
     useEffect(() => {
         getProxSeminario();

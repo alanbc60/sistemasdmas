@@ -1,3 +1,4 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Formulario from '../../components/adminSections/Formulario';
 import Error from '../../components/adminSections/Error'

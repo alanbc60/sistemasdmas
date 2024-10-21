@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {useNavigate} from 'react-router-dom';
-import NoResults from './NoResults';
+import NoResults from '../../elements/NoResults';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen , faTrash} from '@fortawesome/free-solid-svg-icons';
 // import '../styles/components/Categorias.css'

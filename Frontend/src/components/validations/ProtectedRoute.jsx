@@ -1,9 +1,11 @@
+import React from 'react';
 import { connect } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 import toggleLogin from '../../redux/actions/toggleLogin';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { host } from '../../data/host';
+import { useSelector } from 'react-redux';
 /**
  * 
  * @param {object} props
@@ -14,20 +16,15 @@ import { host } from '../../data/host';
  * login, de otra forma se carga las rutas hijo
  */
 
-function ProtectedRoute() {
+function ProtectedRoute({logged, toggleLogin}) {
+    const loggedState = useSelector(state => state.logged);
 
-    const { logged, toggleLogin } = props;
     useEffect( ()=>{
       console.log("Validando Permisos");
         try {
           const getLogin = async ()=>{
-            const response =  (await axios.get(host+":3001/get/login", { withCredentials: true })).data.loggedIn;
-            console.log("esperando respuesta de validacion");
-            //console.log(response.data.loggedIn);
-            //const result = response.data.loggedIn;
-            //props.toggleLogin(result);
-            toggleLogin(response);
-            console.log("la respuesta de la validacion es: ");
+            const response =  (await axios.get(host+":3001/get/login", { withCredentials: true }));
+            toggleLogin(response.data.loggedIn);
           }
           getLogin();
 
@@ -35,7 +32,7 @@ function ProtectedRoute() {
           console.log(error.message)
         }
       }, [])
-    if(!logged.state){
+    if(!loggedState){
         return <Navigate to='/login'/>
     }
     return (

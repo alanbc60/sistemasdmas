@@ -1,9 +1,9 @@
 import Clamp from 'react-multiline-clamp';
-import NoResults from '../../elements/NoResults';
+import NoResults from '../../../elements/NoResults';
 import PropTypes from 'prop-types';
 import {useNavigate} from 'react-router-dom';
-import { ButtonLink } from '../../elements/Buttons';
-import { ShortLoading } from '../../elements/Loading';
+import { ButtonLink } from '../../../elements/Buttons';
+import { ShortLoading } from '../../../elements/Loading';
 import { Container } from 'react-bootstrap';
 /**
  * import React from 'react'
