@@ -4,6 +4,9 @@ import { useDispatch } from 'react-redux';
 import  setAuthenticated  from '../../redux/actions/toggleLogin';
 import  {validateUser}  from './ValidateUser';
 
+// Este componente se encarga de validar al usuario al iniciar la aplicación y cada 10 minutos usando la función validateUser
+
+
 const GlobalAuth = ({ children }) => {
   const dispatch = useDispatch();
 

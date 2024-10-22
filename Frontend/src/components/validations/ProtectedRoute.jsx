@@ -1,8 +1,9 @@
+// eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { connect } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 import toggleLogin from '../../redux/actions/toggleLogin';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { host } from '../../data/host';
 import { useSelector } from 'react-redux';
@@ -16,29 +17,36 @@ import { useSelector } from 'react-redux';
  * login, de otra forma se carga las rutas hijo
  */
 
-function ProtectedRoute({logged, toggleLogin}) {
-    const loggedState = useSelector(state => state.logged);
+function ProtectedRoute({ toggleLogin }) {
+  const loggedState = useSelector((state) => state.logged);
+  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para controlar la carga
 
-    useEffect( ()=>{
-      console.log("Validando Permisos");
-        try {
-          const getLogin = async ()=>{
-            const response =  (await axios.get(host+":3001/get/login", { withCredentials: true }));
-            toggleLogin(response.data.loggedIn);
-          }
-          getLogin();
+  useEffect(() => {
+    const getLogin = async () => {
+      try {
+        const response = await axios.get(`${host}:3001/get/login`, { withCredentials: true });
+        toggleLogin(response.data.loggedIn);
+      } catch (error) {
+        console.log(error.message);
+      } finally {
+        setIsLoading(false); // Indicar que la carga ha terminado
+      }
+    };
 
-        } catch (error) {
-          console.log(error.message)
-        }
-      }, [toggleLogin])
-    if(!loggedState){
-        return <Navigate to='/login'/>
-    }
-    return (
-        <Outlet/>
-    )
+    getLogin();
+  }, [toggleLogin]);
+
+  if (isLoading) {
+    return <p>Cargando...</p>; // Mostrar un mensaje de carga mientras espera la validación
+  }
+
+  if (!loggedState) {
+    return <Navigate to="/login" />;
+  }
+
+  return <Outlet />;
 }
+
 
 const mapStateToProps = (state) =>{
     return{

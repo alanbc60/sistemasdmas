@@ -31,8 +31,8 @@ function Header() {
   const location = useLocation();
 
   // Acceder al estado global del usuario logueado
-  const logged = useSelector((state) => state.logged); // Accede al reducer 'logged'
-  console.log("Estado del usuario: ", logged.state)
+  const loggedState = useSelector((state) => state.logged); // Accede al reducer 'logged'
+  console.log("Estado del usuario: ", loggedState);
 
   axios.defaults.withCredentials = true;
 
@@ -68,7 +68,7 @@ function Header() {
 
 
   const adminBtn = () => {
-    if (logged.state) {
+    if (loggedState) {
         try {
           navigate("/admin")
         } catch (error) {
@@ -80,7 +80,7 @@ function Header() {
 
   // funciones del admin
   const sessionBtn = () => {
-    if (logged.state) {
+    if (loggedState) {
       Swal.fire({
         title: 'Terminará tu sesión actual',
         text: '¿Está seguro que desea terminar su sesión?',
@@ -100,16 +100,18 @@ function Header() {
               // Cambia el estado de 'logged' de la accion del reducer toogleLogin
               dispatch(toggleLogin(false))
 
+              toggleLogin(false)
+
               // Limpia el localStorage
               localStorage.clear()
-              navigate("/login")
+              navigate("/")
 
-              if (logged.state) {
-                getLogout();
-              }
-              toggleLogin(false)
+              // if (result) {
+              //   getLogout();
+              // }
+              
             }
-            getLogout();
+            await getLogout();
 
 
           } catch (error) {
@@ -141,18 +143,18 @@ function Header() {
           </div>
   
           {/* Botón de sesión */}
-          <div className="flex justify-center items-center col-span-1 space-x-4 hover:text-gray-400 transition-all duration-500">
+          <div className="flex justify-center items-center col-span-1 space-x-4  transition-all duration-500">
             <button 
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 hover:text-gray-400"
               onClick={sessionBtn}
             >
-              <span>{logged.state ? "Cerrar sesión" : "Iniciar sesión"}</span>
+              <span>{loggedState ? "Cerrar sesión" : "Iniciar sesión"}</span>
               {logoutLoading ? <ShortLoading /> : <FontAwesomeIcon icon={faCircleUser} className="h-6 w-6"/>}
             </button>
   
             {/* Botón de administrador */}
-            {logged.state && (
-              <button className="flex items-center gap-2" onClick={adminBtn}>
+            {loggedState && (
+              <button className="flex items-center gap-2 hover:text-orange-800" onClick={adminBtn}>
                 <span>Administrador</span>
                 <FontAwesomeIcon icon={faUserTie} className="h-6 w-6" />
               </button>

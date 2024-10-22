@@ -1,75 +1,86 @@
 import Clamp from 'react-multiline-clamp';
 import NoResults from '../../../elements/NoResults';
 import PropTypes from 'prop-types';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ButtonLink } from '../../../elements/Buttons';
 import { ShortLoading } from '../../../elements/Loading';
-import { Container } from 'react-bootstrap';
+
 /**
- * import React from 'react'
-
-function ProxSEminario() {
-  return (
-    <div>
-      
-    </div>
-  )
-}
-
-export default ProxSEminario
-
- * @param {object, bool} 
- * proxSeminario: Objeto con los datos fecha, id, imagen, titulo, resumen, youtube 
- * bool: estado para mostrar el objeto una vez se tenga
- * @returns componente en forma de tarjeta que muestra el contenido del objeto
+ * Componente que muestra un próximo seminario en forma de tarjeta.
  */
-export const ProximoSeminario = ({proxSeminario, loadingProxSeminario})=>{
-    const dateObject = new Date(proxSeminario.fecha);
-    const date = ''+dateObject.getDate()+'/'+(dateObject.getMonth()+1)+'/'+dateObject.getFullYear();
-    const navigate = useNavigate();
-    const handleClick = ()=>{
-      navigate(`/ver/seminarios/${proxSeminario.id}`)
-    }
-  
-    return(
-      <>
-      {loadingProxSeminario ? <ShortLoading/>:
-      <Container>
-        <Container className='mt-3'>
-          <h3 className='text-center'>Próximo seminario</h3>
-        </Container>
-        {proxSeminario.length===0?<NoResults/>:
-        <article id='prox-seminario-article'>
-          <figure id='prox-seminario-fig' onClick={handleClick}>
-            <img alt='descripción del seminario' src={proxSeminario.imagen} id='prox-seminario-img'/>
-          </figure>
-          <aside id='prox-seminario-info'>
-            <div>
-            <Clamp lines={3}>
-              <h4 id='prox-seminario-title'>{proxSeminario.titulo}</h4>
-            </Clamp>
-            </div>
-            <p>{proxSeminario.responsable}</p>
-            <div>
-            <Clamp lines={3}>
-              <p className='prox-seminario'>{proxSeminario.resumen}</p>
-            </Clamp>
-            </div>
-            <ButtonLink label={'en Youtube'} path={proxSeminario.youtube}/>
-            <p className='text-muted'>{date}</p>
-          </aside>
-        </article>
-        }
-        <Container className='my-4'>
-          <h3 className='text-center'>Más seminarios</h3>
-        </Container>
-      </Container>}
-      </>
-    )  
-  }
-  
+export const ProximoSeminario = ({ proxSeminario, loadingProxSeminario }) => {
+  const dateObject = new Date(proxSeminario.fecha);
+  const date = `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/ver/seminarios/${proxSeminario.id}`);
+  };
+
+  return (
+    <>
+      {loadingProxSeminario ? (
+        <ShortLoading />
+      ) : (
+        <div className="container mx-auto p-4">
+          <div className="mt-3 text-center">
+            <h3 className="text-2xl font-semibold">Próximo seminario</h3>
+          </div>
+
+          {proxSeminario.length === 0 ? (
+            <NoResults />
+          ) : (
+            <article className="flex flex-col md:flex-row gap-6 bg-white shadow-md rounded-lg p-6 mt-4">
+              <figure
+                className="cursor-pointer w-full md:w-1/2"
+                onClick={handleClick}
+              >
+                <img
+                  alt="Descripción del seminario"
+                  src={proxSeminario.imagen}
+                  className="rounded-lg shadow-md object-cover w-full h-full"
+                />
+              </figure>
+
+              <aside className="w-full md:w-1/2 flex flex-col justify-between">
+                <div>
+                  <Clamp lines={3}>
+                    <h4 className="text-xl font-bold mb-2">
+                      {proxSeminario.titulo}
+                    </h4>
+                  </Clamp>
+                  <p className="text-gray-600">{proxSeminario.responsable}</p>
+
+                  <div className="mt-2">
+                    <Clamp lines={3}>
+                      <p className="text-gray-500">{proxSeminario.resumen}</p>
+                    </Clamp>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <ButtonLink
+                    label="Ver en Youtube"
+                    path={proxSeminario.youtube}
+                    className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg"
+                  />
+                </div>
+
+                <p className="text-gray-400 text-sm mt-2">{date}</p>
+              </aside>
+            </article>
+          )}
+
+          <div className="my-4 text-center">
+            <h3 className="text-2xl font-semibold">Más seminarios</h3>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
 ProximoSeminario.propTypes = {
-proxSeminario: PropTypes.any.isRequired,
-loadingProxSeminario: PropTypes.bool.isRequired
-}
-  
+  proxSeminario: PropTypes.any.isRequired,
+  loadingProxSeminario: PropTypes.bool.isRequired,
+};
