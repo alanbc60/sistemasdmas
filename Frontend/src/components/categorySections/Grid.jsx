@@ -18,103 +18,113 @@ import { Container, Row } from 'react-bootstrap';
  * deleteItem: función para hacer la petición al servidor de eliminar un elemento  
  * @returns Regresa un contenedor que renderiza items
  */
-export const GridConteiner = ({
-  arrGrid, pathItem, 
-  isLoggedIn, deleteItem })=>{
-  return(
-    <>
-    {arrGrid&&
-    <>{arrGrid.length>0?
-      <div className='justify-content-center my-4'>
-        <Container>
-          <Row className='justify-content-center row-cols-auto gap-4'>
-          {arrGrid.map((e,index)=>(
-          <GridItem key={index} item={e} pathItem={pathItem} isLoggedIn={isLoggedIn} deleteItem={deleteItem}/>
-        ))}
-          </Row>
-        </Container>
-      </div>
-      :
-      <NoResults/>}
-    </>
-    }
-    </>
-  )
-}
 
-GridConteiner.propTypes = {
+
+export const GridContainer = ({ arrGrid, pathItem, isLoggedIn, deleteItem }) => {
+  return (
+    <>
+      {arrGrid && (
+        <>
+          {arrGrid.length > 0 ? (
+            <div className="my-8 px-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
+                {arrGrid.map((e, index) => (
+                  <GridItem
+                    key={index}
+                    item={e}
+                    pathItem={pathItem}
+                    isLoggedIn={isLoggedIn}
+                    deleteItem={deleteItem}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <NoResults />
+          )}
+        </>
+      )}
+    </>
+  );
+};
+
+
+
+GridContainer.propTypes = {
   arrGrid:PropTypes.array,
   pathItem: PropTypes.string.isRequired,
   isLoggedIn: PropTypes.any.isRequired,
   deleteItem: PropTypes.func.isRequired
 }
-/**
- * 
- * @param {object, string, any, func} 
- * item: contienen fecha, titulo, responsable e id
- * pathItem: String que redirecciona a la componente editar___ según la categoría
- * isLoggedIn: debería ser booleana pero en ocasiones es nula, dice si el estado global esta logeado o no
- * deleteItem: función para hacer la petición al servidor de eliminar un elemento  
- * @returns un elemento del Grid 
- */
-export const GridItem = ({item,  pathItem, isLoggedIn, deleteItem})=>{
-  
-  const procesarFecha = (fecha)=>{
-    if (fecha){
+
+
+export const GridItem = ({ item, pathItem, isLoggedIn, deleteItem }) => {
+  const navigate = useNavigate();
+  const handleDelete = (e) => {
+    deleteItem(e);
+  };
+
+  const procesarFecha = (fecha) => {
+    if (fecha) {
       const formatoAnio = /^\d{4}$/;
       if (formatoAnio.test(fecha)) {
-        return fecha
-      }else{
+        return fecha;
+      } else {
         const dateObject = new Date(fecha);
-        return ''+dateObject.getUTCDate()+'/'+(dateObject.getMonth()+1)+'/'+dateObject.getFullYear();
+        return `${dateObject.getUTCDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
       }
-    }else{
-      return null
     }
-  }  
+    return null;
+  };
+
   const date = procesarFecha(item.fecha);
-  const navigate = useNavigate();
-  const handleDelete = (e)=>{
-    deleteItem(e)
-  }
-  return(
-      <article className='item-container'>
-        <figure className='item-fig'>
-          <img className='item-img' src={item.imagen} alt={item.titulo}/>
-        </figure>
-        <div>
-        <Clamp lines={3}>
-          <h5 className='item-title'>{item.titulo}</h5>
-        </Clamp>
-        </div>
-        {item.responsable&&
-          <div>
-            <Clamp lines={3}>
-            <p className='item-exp'>{item.responsable}</p>
-            </Clamp>
-          </div>
-        }
-        {date&&
-          <p className='item-date'>{date}</p>
-        }
-        <div className='item-container-btn'>
-          <button className='item-btn-ver' onClick={()=>navigate(`/ver${pathItem}${item.id}`)}>
+
+  return (
+    <article className="bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200 max-w-md">
+      <figure className="h-40 overflow-hidden">
+        <img
+          className="w-full h-full object-cover"
+          src={item.imagen}
+          alt={item.titulo}
+        />
+      </figure>
+      <div className="p-4">
+        <h5 className="text-lg font-bold mb-1">{item.titulo}</h5>
+        {item.responsable && (
+          <p className="text-gray-600 mb-2">{item.responsable}</p>
+        )}
+        {date && <p className="text-sm text-gray-500 mb-4">{date}</p>}
+        <div className="flex items-center justify-between">
+          <button
+            className="w-72 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium py-2 px-4 rounded-xl transition-all duration-200 ease-in-out"
+            onClick={() => navigate(`/ver${pathItem}${item.id}`)}
+          >
             Ver más
           </button>
-          {isLoggedIn&&
-            <div className='item-container-btn-sesion'>
-              <button className='edit-btn'   onClick={()=>navigate(`/editar${pathItem}${item.id}`)}>
-                <FontAwesomeIcon icon={faPen} />
+          {isLoggedIn && (
+            <div className="flex space-x-3">
+              <button
+                className="bg-white shadow-md p-3 rounded-xl hover:bg-gray-100"
+                onClick={() => navigate(`/editar${pathItem}${item.id}`)}
+              >
+                <FontAwesomeIcon icon={faPen} className="text-yellow-500" />
               </button>
-              <button className='delete-btn' onClick={()=>handleDelete(item)}>
-                <FontAwesomeIcon icon={faTrash} />
+              <button
+                className="bg-white shadow-md p-3 rounded-xl hover:bg-gray-100"
+                onClick={() => handleDelete(item)}
+              >
+                <FontAwesomeIcon icon={faTrash} className="text-red-500" />
               </button>
             </div>
-          }
+          )}
         </div>
-      </article>
-  )
-}
+      </div>
+    </article>
+  );
+};
+
+
+
 
 GridItem.propTypes = {
   item: PropTypes.object.isRequired,

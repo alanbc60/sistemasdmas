@@ -4,17 +4,18 @@ import Footer from '../../components/generalSections/Footer'
 import Header from '../../components/generalSections/Header'
 import HeaderSection from '../../components/generalSections/HeaderSection'
 import CategoriasBody from '../../components/categorySections/CategoriasBody'
+import { useLayoutData } from "../../hooks/useLayoutData";
 
 function Eventos() {
+  const {layoutData} = useLayoutData('eventos');
   return (
-    <>
-          <>
+    <>  
       <Header/>
-      <HeaderSection/>
+      <HeaderSection layoutData={layoutData}/>
       <CategoriasBody categoria='publicaciones' loginState={true}/>
       <Footer/> 
     </>
-    </>
+  
   )
 }
 

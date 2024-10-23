@@ -2,15 +2,6 @@
 // import bgHeaderHome from '../assets/backgrounds/bgbanner.jpg';
 import bgHeaderSugerencias from '../assets/backgrounds/bgsugerencias.jpg';
 
-
-//Background Categorias
-import bgHeaderSeminarios from '../assets/backgrounds/bgseminario.jpg';
-import bgHeaderEventos from '../assets/backgrounds/bgeventos.jpg';
-import bgHeaderLineamientos from '../assets/backgrounds/bglineamientoproc.jpg';
-import bgHeaderInvestigacion from '../assets/backgrounds/bgproyectoinvestigacion.jpg';
-import bgHeaderTerminales from '../assets/backgrounds/bgproyectoterminal.jpg';
-import bgHeaderPublicaciones from '../assets/backgrounds/bgpublicaciones.jpg';
-
 //Iconos Categorias
 import seminariosIcon from "../assets/icons/seminariosdepartamentales.png";
 import proyectosInvestigacionIcon from "../assets/icons/proyectosinvestigacion.png";
@@ -68,7 +59,8 @@ export const sections = [
         bgHeader: bgHeaderSugerencias,
         desc: ['Envía tus sugerencias para ayudarnos a mejorar nuestro servicio. ¡Valoramos tu opinión!'],
         to: 'sugerencias'
-    }
+    },
+
 ]
 
 /**
@@ -76,54 +68,59 @@ export const sections = [
  */
 export const categorias =[
     {
-        "id": 1,
-        "title": "Seminarios Departamentales",
-        "bgHeader": bgHeaderSeminarios,
-        "desc": ["Consulta las pláticas a nivel divulgación sobre los temas de investigación en el DMAS."],
-        "icon": seminariosIcon,
-        "link": "seminarios"
+        id: 1,
+        title: "Seminarios Departamentales",
+        bgHeader: 'bg-seminarios',
+        desc: ["Consulta las pláticas a nivel divulgación sobre los temas de investigación en el DMAS."],
+        icon: seminariosIcon,
+        to: 'seminarios',
+        link: 'seminarios'
     },
     {
-        "id": 2,
-        "title": "Proyectos de Investigación",
-        "bgHeader": bgHeaderInvestigacion,
-        "desc": ["Consulta los proyectos de investigación en los que participa el profesorado del DMAS."],
-        "icon":  proyectosInvestigacionIcon,
-        "link": "proyectosinvestigacion"
+        id: 2,
+        title: "Proyectos de Investigación",
+        bgHeader: 'bg-proyectosinvestigacion',
+        desc: ["Consulta los proyectos de investigación en los que participa el profesorado del DMAS."],
+        icon:  proyectosInvestigacionIcon,
+        to: 'proyectosinvestigacion',
+        link: "proyectosinvestigacion"
     },
     {
-        "id": 3,
-        "title": "Publicaciones",
-        "bgHeader": bgHeaderPublicaciones,
-        "desc": ["Consulta las publicaciones más recientes de los integrantes del DMAS: artículos en revista, memorias de congreso, capítulos de libro y otros."],
-        "icon":  publicacionesIcon,
-        "link": "publicaciones"
+        id: 3,
+        title: "Publicaciones",
+        bgHeader: 'bg-publicaciones',
+        desc: ["Consulta las publicaciones más recientes de los integrantes del DMAS: artículos en revista, memorias de congreso, capítulos de libro y otros."],
+        icon:  publicacionesIcon,
+        to: 'publicaciones',
+        link: "publicaciones"
     },
     {
-        "id": 4,
-        "title": "Eventos",
-        "bgHeader": bgHeaderEventos,
-        "desc": ["Consulta los próximos eventos: Talleres, conferencias, seminarios, etc."],
-        "icon":  eventosIcon,
-        "link": "eventos"
+        id: 4,
+        title: "Eventos",
+        bgHeader: 'bg-eventos',
+        desc: ["Consulta los próximos eventos: Talleres, conferencias, seminarios, etc."],
+        icon:  eventosIcon,
+        to: 'eventos',
+        link: "eventos"
     },
     {
-        "id": 5,
-        "title": "Proyectos Terminales",
-        "bgHeader": bgHeaderTerminales,
-        "desc": ["Proyectos terminales dirigidos por profesores del DMAS elaborados por el alumnado de Matemáticas Aplicadas e Ingeniería en Computación."],
-        "icon":  proyectosTerminalesIcon,
-        "link": "proyectosterminales"
+        id: 5,
+        title: "Proyectos Terminales",
+        bgHeader: 'bg-proyectosterminales',
+        desc: ["Proyectos terminales dirigidos por profesores del DMAS elaborados por el alumnado de Matemáticas Aplicadas e Ingeniería en Computación."],
+        icon:  proyectosTerminalesIcon,
+        to: 'proyectosterminales',
+        link: "proyectosterminales"
     },
     {
-        "id": 6,
-        "title": "Lineamientos y Procedimientos",
-        "bgHeader": bgHeaderLineamientos,
-        "desc": ["Lineamientos y Procedimientos del Departamento de Matemáticas Aplicadas y Sistemas."],
-        "icon": lineamientosIcon,
-        "link": "lineamientosproc"
-    }
-    
+        id: 6,
+        title: "Lineamientos y Procedimientos",
+        bgHeader: 'bg-lineamientosproc',
+        desc: ["Lineamientos y Procedimientos del Departamento de Matemáticas Aplicadas y Sistemas."],
+        icon: lineamientosIcon,
+        to: 'lineamientosproc',
+        link: "lineamientosproc"
+    } 
 ]
 /**
  * Arreglo con la información para mostrar en la seccion jefes del dmas
@@ -134,7 +131,8 @@ export const jefesdeldmas = [
         period: '2023-2027', 
         detalles: 'Realizó sus estudios de Ingeniería en Electrónica en la UAM-I (2011), de Maestría en Ciencias de Ingeniería en Microelectrónica en el IPN (2014) y de Doctorado en Comunicaciones y Electrónica en el IPN (2018). Actualmente es el Jefe de Departamento de Matemáticas Aplicadas y Sistemas, por el periodo 2023-2027.', 
         imgSrc: arelyImg
-    }, 
+    },
+
     {
         nombre: 'Dr. Julián Alberto Fresán Figueroa', 
         period: '2019-2023',

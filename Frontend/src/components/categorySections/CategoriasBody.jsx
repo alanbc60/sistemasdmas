@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 
 import { FilterSection } from '../../components/categorySections/Filters';
-import { GridConteiner } from '../../components/categorySections/Grid';
+import { GridContainer } from '../../components/categorySections/Grid';
 import { Loading } from '../../elements/Loading';
 import { ButtonNav } from '../../elements/Buttons';
 import { ProximoSeminario } from '../../components/categorySections/Seminarios/ProxSeminario';
@@ -35,7 +35,7 @@ export default function CategoriasBody({ categoria, loginState }) {
         header, deleteItem, proxSeminario,
         loadingProxSeminario, getProxSeminario } = useCategoriasGrid(categoria);
 
-    console.log("pathItem: "+pathItem);
+    // console.log("pathItem: "+pathItem);
 
     useEffect(() => {
         getProxSeminario();
@@ -62,9 +62,10 @@ export default function CategoriasBody({ categoria, loginState }) {
                     mostrarArea={mostrarArea}
                     arrOrdenarPor={arrOrdenarPor}
                     getFiltered={getFilteredGridData}
-                />}
+                />
+            }
             {loadingArrGrid ? <Loading /> :
-                <GridConteiner
+                <GridContainer
                     arrGrid={arrGrid}
                     pathItem={pathItem}
                     isLoggedIn={loginState}

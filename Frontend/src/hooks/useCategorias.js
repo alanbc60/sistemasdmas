@@ -161,12 +161,12 @@ export const useVerItem = (categoria, item)=>{
 }
 
 export const useCategoriasMenu = (categoria)=>{
-    const [arrMenu, setArrMenu] = useState(null);
+    const [arrMenu, setArrMenu] = useState([]);
     const [loadingMenu, setMenuLoading]=useState(false)
     const [filtrarPorKey, setFiltrarPorKey] = useState('')
     const [filtrarPorLabel, setFiltrarPorLabel] = useState('')
     const [mostrarArea, setMostrarArea]= useState(false)
-    const [arrOrdenarPor, setArrOrdenarPor]= useState(null)
+    const [arrOrdenarPor, setArrOrdenarPor]= useState([])
     
     const getMenuData = useCallback(async()=>{
         if (categoria === 'seminarios') {
@@ -174,7 +174,11 @@ export const useCategoriasMenu = (categoria)=>{
             try {
                 setMenuLoading(true);     
                 const response = await axios.get(host+`:3001/get/seminarios/expositores`);
-                const result = response.data
+                const result = response.data;
+                // verificar si result es un array
+                if (Array.isArray(result)) {
+                    console.log("arrMenu es un array");
+                }
                 setArrMenu(result)
                 setFiltrarPorKey('expositor')
                 setFiltrarPorLabel('Expositor/a')
@@ -575,7 +579,7 @@ export const useCategoriasGrid = (categoria)=>{
 
     const pathItem = useMemo(()=>{
         console.log("Entro al pathItem del grid");
-        console.log("categoria en memo: "+categoria);
+        // console.log("categoria en memo: "+categoria);
         if (categoria === 'seminarios') {
             return  '/seminarios/'
         } else if (categoria === 'proyectosinvestigacion') {
@@ -591,7 +595,7 @@ export const useCategoriasGrid = (categoria)=>{
         } 
     },[categoria])
 
-    console.log("pathItem del grid: "+pathItem);
+    // console.log("pathItem del grid: "+pathItem);
 
     const deleteItem = useCallback(async(item)=>{
         const {titulo, id, responsable} = item;

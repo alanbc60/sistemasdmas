@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 export default function HeaderSection({ layoutData }) {
 
 
+    console.log("El layoutData es:", layoutData);
 
     // Estilos para el encabezado de Jefes del DMAS
     const jefesdeldmasColor =
