@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 
 const Formulario = ({ usuario }) => {
@@ -10,7 +11,7 @@ const Formulario = ({ usuario }) => {
   console.log("usuarioActual: " + JSON.stringify(usuarioActual));
 
 
-  
+  const inputStyle = 'bg-gray-50 mt-2 block p-3 w-full border border-[1px] border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors duration-500';
   return (
       <>
         <div className="mb-4">
@@ -20,7 +21,7 @@ const Formulario = ({ usuario }) => {
           <input
             id="nombre"
             type="text"
-            className="mt-2 block w-full p-3 bg-gray-50"
+            className={`${inputStyle}`}
             placeholder="Ingresa el nombre"
             name="nombre"
             defaultValue={usuarioActual?.nombre || ''}
@@ -33,7 +34,7 @@ const Formulario = ({ usuario }) => {
           <input
             id="apellido_paterno_input"
             type="text"
-            className="mt-2 block w-full p-3 bg-gray-50"
+            className={`${inputStyle}`}
             placeholder="Ingresa el apellido paterno"
             name="apaterno"
             defaultValue={usuarioActual?.apaterno || ''}
@@ -47,7 +48,7 @@ const Formulario = ({ usuario }) => {
           <input
             id="apellido_materno_input"
             type="text"
-            className="mt-2 block w-full p-3 bg-gray-50"
+            className={`${inputStyle}`}
             placeholder="Ingresa el apellido materno"
             name="amaterno"
             defaultValue={usuarioActual?.amaterno || ''}
@@ -61,7 +62,7 @@ const Formulario = ({ usuario }) => {
           <input
             id="email_input"
             type="email"
-            className="mt-2 block w-full p-3 bg-gray-50"
+            className={`${inputStyle}`}
             placeholder="Ingresa el correo"
             name="mail"
             defaultValue={usuarioActual?.mail || ''}
@@ -75,7 +76,7 @@ const Formulario = ({ usuario }) => {
           <input
             id="password_input"
             type="text"
-            className="mt-2 block w-full p-3 bg-gray-50"
+            className={`${inputStyle}`}
             placeholder="Ingresa el password"
             name="password"
             autoComplete="off"
