@@ -1,6 +1,7 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Formulario from '../../components/Admin/Formulario';
-import Error from '../../components/Admin/Error'
+import Formulario from '../../components/adminSections/Formulario';
+import Error from '../../components/adminSections/Error'
 import validator from 'validator';
 import { useState, useEffect } from 'react';
 import { actualizarUsuario, obtenerUsuario } from '../../hooks/useAdmin';
@@ -81,6 +82,7 @@ function EditarUsuario() {
         const usuarioActualizado = await actualizarUsuario({ params: { usuarioId }, datos })
 
         if( usuarioActualizado == true){
+          console.log("Actualizacion de datos exitosa");
           toast.success('Usuario actualizado exitosamente',{
             autoClose: 5000 // Duración de 5 segundos
           }); 
@@ -110,7 +112,7 @@ function EditarUsuario() {
 
     </div>
       <div className="flex justify-end">
-        <button className="bg-orange-uam text-white px-3 py-1 font-bold uppercase border-none shadow-md transition duration-600 hover:bg-orange-300 hover:shadow-lg"
+        <button className="bg-orange-uam text-white px-3 py-1 font-bold uppercase border-none rounded-lg shadow-md transition duration-500 hover:bg-orange-300 hover:shadow-lg"
         onClick={showConfirmation}>
         {/* onClick={() => navigate(-1)}> */}
           Descartar
@@ -164,5 +166,4 @@ const mapDispatchToProps ={
 
 const ConnectedEditarUsuario = connect(mapStateToProps, mapDispatchToProps)(EditarUsuario);
 export default ConnectedEditarUsuario;
-
 
