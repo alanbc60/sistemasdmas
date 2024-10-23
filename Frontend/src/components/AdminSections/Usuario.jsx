@@ -1,3 +1,4 @@
+import React from 'react';
 import { useNavigate} from 'react-router-dom';
 //import {useState} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -63,37 +64,40 @@ function Usuario({usuario}) {
         });
     }
 
+    const celdaStyle = 'text-center p-3';
+    const btnCelda= 'grid grid-cols-1 place-items-center py-2 min-w-[85px] min-h-[40px] font-bold text-xs rounded-lg border-none shadow-lg hover:shadow-md transition-colors duration-500'
 
     return (
-        <tr className="border-b">
-            <td className='p-6 space-y-2'>
+        <tr className="hover:bg-gray-100 transition-colors duration-300">
+            <td className={`${celdaStyle}`}>
                 <p>{idusuario}</p>
             </td>
 
-            <td className="p-6">
+            <td className={`${celdaStyle}`}>
                 <p className="text-gray-600"> {nombre} </p>
             </td>
 
-            <td>
+            <td  className={`${celdaStyle}`}>
                 <p className="text-gray-600"> {apaterno} </p>
             </td>
 
-            <td>
+            <td  className={`${celdaStyle}`}>
                 <p className="text-gray-600 font-bold">{amaterno} </p>
             </td>
 
-            <td>
+            <td  className={`${celdaStyle}`}>
                 <p className="text-gray-600"> {mail} </p>
             </td>
 
-            <td>
+            <td  className={`${celdaStyle}`}>
                 <p className="text-gray-600">{password} </p>
             </td>
 
-            <td className="p-6 flex gap-3 justify-end">
+            <td className={`${celdaStyle} flex justify-center gap-6`}>
+
                 <button
                     type="button"
-                    className="text-yellow-500 hover:bg-yellow-200 uppercase font-bold text-xs border-none shadow-md transition duration-600 hover:shadow-lg"
+                    className={`text-yellow-500 ${btnCelda} hover:bg-yellow-200`}
                     onClick={() => navigate(`./usuarios/editarUsuario/${idusuario}`) }
                 >
                     <FontAwesomeIcon icon={faUserPen} />
@@ -109,7 +113,7 @@ function Usuario({usuario}) {
             >
                 <button
                     type="submit"
-                    className="text-red-600 hover:bg-red-300 uppercase font-bold text-xs border-none shadow-md transition duration-600 hover:shadow-lg"
+                    className={`text-red-600 ${btnCelda}  hover:bg-red-200 `}
                 >
                     <FontAwesomeIcon icon={faTrash} />
                     Eliminar
