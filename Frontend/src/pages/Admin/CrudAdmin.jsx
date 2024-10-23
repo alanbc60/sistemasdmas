@@ -1,5 +1,6 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
-import Usuario from '../../components/AdminSections/Usuario';
+import Usuario from '../../components/adminSections/Usuario';
 import { AdminLoader } from '../../hooks/useAdmin';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -37,7 +38,7 @@ function CrudAdmin(props) {
       cancelButtonText: 'No',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        if (props.logged.state) {
+        if (props.logged) {
           console.log("entro a la validacion session encontrada");
           try {       
             const getLogout = async () => {
@@ -133,16 +134,20 @@ function CrudAdmin(props) {
     }
   };
 
+  const pagBtnStyle = 'py-1 px-2 border bg-orange-uam text-white rounded-md shadow-lg hover:shadow-md hover:bg-orange-400';
+  const inputStyle = 'bg-white w-full h-15 p-4 border border-[1px] border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors duration-500';
+
   return (
     <>
-      <div id='top-nav-adm' className=''>
-        <div id='titulo-nav-container-adm' className='flex items-center justify-center'>
+      <div id='top-nav-adm' className='min-w-[500px] grid md:grid-cols-[5fr_1fr] grid-cols-1 p-6'>
+
+        <div id='titulo-nav-container-adm' className='flex justify-center py-2'>
           <h1 className="font-black text-4xl text-orange-500 text-center z-1">Usuarios DMAS</h1>
         </div>
 
 
-        <div id='session-nav-container-adm' className='flex justify-center'>
-          <button className='session-btn-adm' onClick={sessionBtn}>
+        <div id='session-nav-container-adm' className='p-2 flex justify-center' >
+          <button className='min-w-[150px] p-2 text-orange-500 font-bold rounded-2xl hover:shadow-sm hover:text-gray-400 transition-all duration-500' onClick={sessionBtn}>
             <span >Cerrar sesión </span>
             <FontAwesomeIcon icon={faCircleUser} />
           </button>
@@ -156,13 +161,8 @@ function CrudAdmin(props) {
             <input
               type="text"
               placeholder="Buscar usuario"
-              className="w-full p-2 mt-5 rounded-md border-2 transition duration-300 ease-in-out bg-white focus:border-blue-500 focus:outline-none"
+              className={`${inputStyle}`}
               onChange={handleSearch}
-              style={{
-                borderRadius: '10px',
-                border: '3px solid rgba(255, 255, 255, 0.3)',
-                boxShadow: '2px 2px 2px rgba(0, 0, 0, 0.08), -3px -2px 3px rgba(255, 255, 255, 0.2), 2px 2px 2px rgba(0, 0, 0, 0.08) inset',
-              }}
             />
           </div>
 
@@ -190,23 +190,23 @@ function CrudAdmin(props) {
             </tbody>
           </table>
 
-          <nav className='mt-10 lg:flex lg:justify-between'>
-            <ul className='flex items-center'>
-              <li className="mr-2 page-item">
-                <button className="p-1 px-2 border bg-orange-uam text-white rounded-md shadow-md hover:bg-orange-400" onClick={handlePrevClick}>Anterior</button>
+          <nav className='mt-10 flex justify-between w-full'>
+            <ul className='flex'>
+              <li className="pr-1">
+                <button className={`${pagBtnStyle}`} onClick={handlePrevClick}>Anterior</button>
               </li>
               {numbers.map(number => (
-                <li className={paginaActual === number ? 'page-item active' : 'page-item'} key={number}>
+                <li className={paginaActual === number ? 'page-item active px-1' : 'page-item'} key={number}>
                   <button
-                    className="p-1 px-2 border bg-orange-uam text-white rounded-md shadow-md hover:bg-orange-400"
+                    className={`${pagBtnStyle}`}
                     onClick={(e) => handlePageClick(number, e)}
                   >
                     {number}
                   </button>
                 </li>
               ))}
-              <li>
-                <button className="p-1 px-2 border bg-orange-uam text-white rounded-md shadow-md hover:bg-orange-400" onClick={handleNextClick}>Siguiente</button>
+              <li className="pl-1">
+                <button className={`${pagBtnStyle}`} onClick={handleNextClick}>Siguiente</button>
               </li>
             </ul>
           </nav>
