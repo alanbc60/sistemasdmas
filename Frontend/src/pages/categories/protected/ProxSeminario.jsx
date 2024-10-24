@@ -1,4 +1,4 @@
-import Clamp from 'react-multiline-clamp';
+
 import NoResults from '../../../elements/NoResults';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { ShortLoading } from '../../../elements/Loading';
  * Componente que muestra un próximo seminario en forma de tarjeta.
  */
 export const ProximoSeminario = ({ proxSeminario, loadingProxSeminario }) => {
+  console.log("entro a prox seminario");
   const dateObject = new Date(proxSeminario.fecha);
   const date = `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
   const navigate = useNavigate();
@@ -22,63 +23,65 @@ export const ProximoSeminario = ({ proxSeminario, loadingProxSeminario }) => {
       {loadingProxSeminario ? (
         <ShortLoading />
       ) : (
-        <div className="container mx-auto p-4">
-          <div className="mt-3 text-center">
-            <h3 className="text-2xl font-semibold">Próximo seminario</h3>
+        <div className="bg-gray-100">
+
+          <div className="container mx-auto px-8 py-12">
+            <h2 className="text-3xl font-semibold text-center mb-12">
+              Agregar Seminario
+            </h2>
           </div>
 
           {proxSeminario.length === 0 ? (
             <NoResults />
           ) : (
-            <article className="flex flex-col md:flex-row gap-6 bg-white shadow-md rounded-lg p-6 mt-4">
+            <article className="flex flex-wrap md:flex-nowrap">
+              {/* Imagen del Seminario */}
               <figure
-                className="cursor-pointer w-full md:w-1/2"
+                className="w-1/2 md:w-1/2"
                 onClick={handleClick}
               >
                 <img
                   alt="Descripción del seminario"
                   src={proxSeminario.imagen}
-                  className="rounded-lg shadow-md object-cover w-full h-full"
+                  className="rounded-lg shadow-lg hover:opacity-75 object-cover"
                 />
               </figure>
 
-              <aside className="w-full md:w-1/2 flex flex-col justify-between">
+              {/* Contenido del Seminario */}
+              <aside className="w-full md:w-1/2 p-6">
                 <div>
-                  <Clamp lines={3}>
-                    <h4 className="text-xl font-bold mb-2">
-                      {proxSeminario.titulo}
-                    </h4>
-                  </Clamp>
-                  <p className="text-gray-600">{proxSeminario.responsable}</p>
+                  <h4 className="text-2xl font-bold mb-2">{proxSeminario.titulo}</h4>
+                  <p className="text-gray-600 mb-1">{proxSeminario.responsable}</p>
 
-                  <div className="mt-2">
-                    <Clamp lines={3}>
-                      <p className="text-gray-500">{proxSeminario.resumen}</p>
-                    </Clamp>
-                  </div>
+                  <p className="text-gray-500 mt-4 line-clamp-3">
+                    {proxSeminario.resumen}
+                  </p>
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-6">
                   <ButtonLink
-                    label="Ver en Youtube"
+                    label="Ver en YouTube"
                     path={proxSeminario.youtube}
-                    className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg"
+                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full w-full md:w-auto"
                   />
                 </div>
 
-                <p className="text-gray-400 text-sm mt-2">{date}</p>
+                <p className="text-gray-400 text-sm mt-4">{date}</p>
               </aside>
             </article>
           )}
 
-          <div className="my-4 text-center">
-            <h3 className="text-2xl font-semibold">Más seminarios</h3>
+          {/* Título para Más Seminarios */}
+          <div className="my-8 text-center">
+            <h3 className="text-2xl font-semibold">Más Seminarios</h3>
           </div>
         </div>
       )}
     </>
   );
 };
+
+
 
 ProximoSeminario.propTypes = {
   proxSeminario: PropTypes.any.isRequired,

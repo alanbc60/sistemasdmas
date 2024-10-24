@@ -6,11 +6,11 @@ import { useCategoriasMenu, useCategoriasGrid } from '../../hooks/useCategorias'
 import { useEffect } from 'react';
 
 
-import { FilterSection } from '../../components/categorySections/Filters';
-import { GridContainer } from '../../components/categorySections/Grid';
+import { FilterSection } from './Filters';
+import { GridContainer } from './Grid';
 import { Loading } from '../../elements/Loading';
 import { ButtonNav } from '../../elements/Buttons';
-import { ProximoSeminario } from '../../components/categorySections/Seminarios/ProxSeminario';
+import { ProximoSeminario } from '../../pages/categories/protected/ProxSeminario';
 /**
  * 
  * @param {string, bool} 
@@ -21,10 +21,6 @@ import { ProximoSeminario } from '../../components/categorySections/Seminarios/P
  * para obtener el contenido de acuerdo a cada categoria
  */
 export default function CategoriasBody({ categoria, loginState }) {
-
-    // console.log("categoria: "+categoria)
-    // console.log("loginState: "+loginState)
-
     const { arrMenu, loadingMenu,
         getMenuData, filtrarPorKey,
         filtrarPorLabel, mostrarArea,
@@ -34,8 +30,10 @@ export default function CategoriasBody({ categoria, loginState }) {
         pathItem, updateSorted, getFilteredGridData,
         header, deleteItem, proxSeminario,
         loadingProxSeminario, getProxSeminario } = useCategoriasGrid(categoria);
-
-    // console.log("pathItem: "+pathItem);
+        
+    console.log("pathItem: "+pathItem);
+    console.log("header: "+ header);
+    console.log("arrMenu: "+arrMenu);
 
     useEffect(() => {
         getProxSeminario();
@@ -46,8 +44,10 @@ export default function CategoriasBody({ categoria, loginState }) {
     return (
         <section id='categorias-content'>
             {loginState &&
-                <div id='agregar-item' className='my-4'>
-                    <ButtonNav label={`Agregar ${header}`} path={`/agregar${pathItem}`} />
+                <div id='agregar-item' className='flex justify-center my-4'>
+                    <ButtonNav 
+                        label={`Agregar ${header}`} 
+                        path={`/agregar${pathItem}`} />
                 </div>}
             {proxSeminario &&
                 <ProximoSeminario proxSeminario={proxSeminario}
@@ -62,8 +62,7 @@ export default function CategoriasBody({ categoria, loginState }) {
                     mostrarArea={mostrarArea}
                     arrOrdenarPor={arrOrdenarPor}
                     getFiltered={getFilteredGridData}
-                />
-            }
+                />}
             {loadingArrGrid ? <Loading /> :
                 <GridContainer
                     arrGrid={arrGrid}

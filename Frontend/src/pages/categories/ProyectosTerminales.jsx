@@ -5,14 +5,17 @@ import Header from '../../components/generalSections/Header'
 import HeaderSection from '../../components/generalSections/HeaderSection'
 import CategoriasBody from '../../components/categorySections/CategoriasBody'
 import { useLayoutData } from "../../hooks/useLayoutData";
+import { useSelector } from 'react-redux';
 
 function ProyectosTerminales() {
   const {layoutData} = useLayoutData('proyectosterminales');
+  const loggedState = useSelector((state) => state.logged); // Accede al reducer 'logged'
+  console.log("Estado del usuario: ", loggedState);
   return (
     <div>
       <Header />
       <HeaderSection layoutData={layoutData} />
-      <CategoriasBody categoria="proyectosterminales" />
+      <CategoriasBody categoria="proyectosterminales" loginState={loggedState} />
       <Footer />
       
     </div>
