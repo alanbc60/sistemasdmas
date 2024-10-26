@@ -5,14 +5,13 @@ import axios from 'axios';
 import {host} from '../../../data/host';
 import toggleLogin from '../../../redux/actions/toggleLogin';
 import { connect } from 'react-redux';
-import { Loading } from "../../../elements/Loading";
+import { Loading } from "../../../components/generalSections/Loading";
 import { Col, Row, Container, Form } from "react-bootstrap";
 import VistaPreviaImagen from "../protected/VistaPreviaImagen";
 import defaultInvestigacion from '../../../assets/defaultimages/defaultInvestigacion.png'
 import Swal from 'sweetalert2';
 
 function EditarProyectoInvestigacion(props) {
-
     const navigate = useNavigate();
     
     const [isLoading, setLoading] = useState(false);
@@ -288,99 +287,103 @@ function EditarProyectoInvestigacion(props) {
         console.log("PublicarFacebook: "+data.get('publicarFacebook')); 
     }
 
+    const basicBtnStyle = 'block text-white text-center border border-1 border-orange-100 rounded-lg cursor-pointer border-0 hover:text-gray-400 shadow-md hover:shadow-lg transition-colors duration-500 p-3 max-w-[200px] max-h-[50px]';
+    const areaStyle = 'w-full border rounded-lg min-h-[90px] ';
+    const inputStyle = 'bg-gray-50 block border border-1 border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors duration-500 mb-3 p-3';
+    
     return (
-        <div>
-            {isLoading? <Loading/>:
-            <Container>
-                <Row className='my-5'>
-                    <Container className='m-0 p-0'>
-                        <h2 className='text-center'>{modoEdicion?"Editar Proyecto de Investigación":"Agregar Proyecto de Investigación"}</h2>
-                    </Container>
-                </Row>
-                <Container>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Row>
-                            <Col xs={5}>
-                                <Container>
-                                    <VistaPreviaImagen item={item} setValue={setValue} modoEdicion={modoEdicion} defaultImg={defaultInvestigacion}/>
-                                </Container>        
-                            </Col>
-                            <Col xs={7}>
-                                <Container>
-                                    <div className='px-3 mx-2'>
-                                        <Row>
-                                            <Col xs={6}>
-                                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                    <Form.Label>Título de proyecto de investigación</Form.Label>
-                                                    <input type="text" className='form-control' placeholder='Título de proyecto de investigación' {...register("titulo")} required />
-                                                </Form.Group>
-                                            </Col>
-                                            <Col xs={6}>
-                                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                    <Form.Label>Profesor/a</Form.Label>
-                                                    <input type="text" className='form-control' placeholder='Profesor/a' {...register("responsable")} required />
-                                                </Form.Group>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={6}>
-                                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                    <Form.Label>Participantes</Form.Label>
-                                                    <input type="text" className='form-control' placeholder='Participantes' {...register("participantes")} required />
-                                                </Form.Group>
-                                            </Col>
-                                            <Col xs={6}>
-                                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                    <Form.Label>Enlace (Opcional)</Form.Label>
-                                                    <input type="text" className='form-control' placeholder='Enlace' {...register("enlace")} />
-                                                </Form.Group>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={6}>
-                                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                    <Form.Label>Fecha de inicio</Form.Label>
-                                                    <input  type="date" className='form-control' {...register("fechainicio")} required />
-                                                </Form.Group>
-                                            </Col>
-                                            <Col xs={6}>
-                                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                    <Form.Label>Fecha de término</Form.Label>
-                                                    <input type="date" className='form-control' {...register("fechaactualizacion")} required />
-                                                </Form.Group>
-                                            </Col>
-                                        </Row>
+        <div className="flex justify-center min-w-[500px]">
+            {isLoading ? <Loading /> :
+                <main id="principalSeminario" className="w-[80%]">
+                    <header className='m-0 p-0 my-5'>
+                        <h2 className='text-center'>{id ? 'Editar' : 'Agregar'} Proyecto de Investigación</h2>
+                    </header>
+    
+                    <section id="seminarioContainer" className="grid place-items-center grid-rows-auto">
+                        <form onSubmit={handleSubmit(onSubmit)}>
+    
+                            <article id="infoSection" className="grid grid-cols-1 md:grid-cols-2 pb-8">
+                                <figure id="imgDataSection" className="flex justify-center ">
+                                    <VistaPreviaImagen
+                                        item={item}
+                                        setValue={setValue}
+                                        modoEdicion={modoEdicion}
+                                        defaultImg={defaultInvestigacion} />
+                                </figure>
+    
+    
+                                <aside id="infoDataSection" className="flex justify-center">
+                                    <div className='w-full p-4'>
+    
+                                        <p>Título de proyecto de investigación</p>
+                                        <input type="text" className={`w-full ${inputStyle} `} placeholder='Título de proyecto de investigación' {...register("titulo")} required />
+    
+                                        <p  >Profesor/a</p>
+                                        <input type="text" className={`w-full ${inputStyle}`} placeholder='Profesor/a' {...register("responsable")} required />
+    
+    
+                                        <p  >Participantes</p>
+                                        <input type="text" className={`w-full ${inputStyle}`} placeholder='Participantes' {...register("participantes")} required />
+    
+    
+                                        <p  >Enlace (opcional)</p>
+                                        <input type="text" className={`w-full ${inputStyle}`} placeholder='Enlace' {...register("enlace")} />
+    
+                                        <div className="grid grid-cols-2">
+    
+                                            <span>
+                                                <p  >Fecha de inicio</p>
+                                                <input
+                                                    type="date"
+                                                    className={`${inputStyle} w-[90%]`}
+                                                    {...register("fechainicio")} required />
+                                            </span>
+    
+                                            <span>
+                                                <p  >Fecha de término</p>
+                                                <input
+                                                    type="date"
+                                                    className={`${inputStyle} w-[95%] p-3.5`}
+                                                    {...register("fechaactualizacion")} required />
+    
+                                            </span>
+                                        </div>
                                     </div>
-                                </Container>
-                            </Col>
-                        </Row>
-                        <Row className='px-5 my-3'>
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Label>Objetivo</Form.Label>
-                                <textarea className='form-control' rows="5" type="text" placeholder="Objetivo"  {...register("objetivo")} required/>
-                            </Form.Group>
-                        </Row>
-                        <Row className='px-5 mt-3 mb-5'>
-                            <Col>
-                                <Form.Check type="checkbox" label="Publicar en el Facebook del departamento" {...register("publicarFacebook")}/>
-                            </Col>
-                            <Col>              
-                                <Row className='justify-content-around align-items-end'>
-                                    <Col>
-                                        <div className='button-nav btn btn-secondary btn-lg' onClick={() => navigate('/proyectosinvestigacion')}>Regresar</div>
-                                    </Col>
-                                    <Col>
-                                        <input type="submit" value={modoEdicion?'Actualizar':"Publicar"} className='button-submit btn-primary btn-lg'/>
-                                    </Col>
-                                 </Row>      
-                            </Col>
-                        </Row>
-                    </form>
-                </Container>  
-            </Container>    
+                                </aside>
+                            </article>
+    
+    
+                            <aside className="flex justify-center ">
+                                <span className="w-[97%]">
+                                    <p>Objetivo</p>
+                                    <textarea className={`${areaStyle} ${inputStyle}`} type="text" placeholder="Objetivo"  {...register("objetivo")} required />
+                                </span>
+                            </aside>
+    
+    
+    
+                            <aside className='grid grid-cols-[25%_75%] px-5 mt-3 mb-10 '>
+                                <span>
+                                    <Form.Check className="text-gray-900" type="checkbox" label="Publicar en el Facebook del departamento" {...register("publicarFacebook")} />
+                                </span>
+                                <span className="flex justify-end">
+                                    <button className={`bg-orange-400 hover:bg-orange-200 ${basicBtnStyle} m-3 w-full`} onClick={() => navigate('/proyectosinvestigacion')}>Regresar</button>
+    
+                                    <input type="submit" value={modoEdicion ? 'Actualizar' : "Publicar"} className={`bg-blue-400 hover:bg-blue-200 ${basicBtnStyle} m-3 w-full`} />
+                                </span>
+    
+    
+                            </aside>
+    
+    
+    
+                        </form>
+                    </section>
+                </main>
             }
         </div>
     )
+    
 }
 
 

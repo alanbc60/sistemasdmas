@@ -3,7 +3,7 @@ import React from 'react'
 import { useState } from "react"
 import JefeActual from "../components/jefesdeldmas/JefeActual"
 import JefesAnteriores from "../components/jefesdeldmas/JefesAnteriores"
-import { LightboxImagen } from "../elements/Lightbox"
+import { LightboxImagen } from "../components/generalSections/Lightbox"
 import Header from '../components/generalSections/Header'
 import HeaderSection from '../components/generalSections/HeaderSection'
 import Footer from '../components/generalSections/Footer'

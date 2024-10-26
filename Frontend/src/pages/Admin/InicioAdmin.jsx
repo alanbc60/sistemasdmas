@@ -81,4 +81,3 @@ const mapDispatchToProps = {
 
 const ConnectedInicioAdmin = connect(mapStateToProps, mapDispatchToProps)(InicioAdmin);
 export default ConnectedInicioAdmin;
-

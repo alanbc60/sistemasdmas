@@ -10,7 +10,7 @@ import axios from 'axios';
 import { host } from '../../data/host';
 import { useDispatch, useSelector } from 'react-redux';
 import toggleLogin from '../../redux/actions/toggleLogin';
-import { ShortLoading } from '../../elements/Loading';
+import { ShortLoading } from './Loading';
 import { faCircleUser } from '@fortawesome/free-regular-svg-icons';
 import Swal from 'sweetalert2';
 
@@ -27,7 +27,6 @@ function Header() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const location = useLocation();
 
   // Acceder al estado global del usuario logueado

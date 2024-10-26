@@ -11,11 +11,14 @@ import defaultDocumento from '../../assets/defaultimages/defaultDocumento.png'
  */
 export const CoverImage = ({imageSrc, updateLightboxOpen}) =>{
     return(
-        <div id="cover-image" style={{backgroundImage:`url(${imageSrc})`}}>
-            <div className="filter"></div>
-            <button onClick={()=>updateLightboxOpen(imageSrc)}>
-                <img className="expand" src={expandIcon} />
-            </button>
+        <div id="cover-image"
+            className='flex flex-col items-center relative w-full mb-[24px] min-w-[500px] h-[300px] bg-cover bg-center bg-no-repeat'
+            style={{backgroundImage:`url(${imageSrc})`}}>
+            <div className="filter">
+                <button className='absolute bottom-[24px] right-[24px] p-2' onClick={()=>updateLightboxOpen(imageSrc)}>
+                    <img className="expand" src={expandIcon} />
+                </button>
+            </div>
         </div>
     )
 }

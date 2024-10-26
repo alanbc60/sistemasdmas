@@ -5,7 +5,7 @@ import axios from 'axios';
 import {host} from '../../../data/host';
 import toggleLogin from '../../../redux/actions/toggleLogin';
 import { connect } from 'react-redux';
-import { Loading } from "../../../elements/Loading";
+import { Loading } from "../../../components/generalSections/Loading";
 import { Col, Row, Container, Form } from "react-bootstrap";
 import VistaPreviaImagen from "./VistaPreviaImagen";
 import defaultEventos from '../../../assets/defaultimages/defaultEvento.png'
@@ -279,100 +279,101 @@ function EditarEvento(props) {
         console.log("PublicarFacebook: "+data.get('publicarFacebook'));
     }
 
+    const basicBtnStyle = 'block text-white text-center border border-1 border-orange-100 rounded-lg cursor-pointer border-0 hover:text-gray-400 shadow-md hover:shadow-lg transition-colors duration-500 p-3 max-w-[200px] max-h-[50px]';
+    const areaStyle = 'w-full border rounded-lg min-h-[90px] ';
+    const inputStyle = 'bg-gray-50 block border border-1 border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors duration-500 mb-3 p-3';
+    
     return (
-        <div>
-            {isLoading? <Loading/> :
-            <Container>
-                <Row className='my-5'>
-                    <Container className='m-0 p-0'>
-                        <h2 className='text-center'>{id?'Editar':'Agregar'} Evento</h2>
-                    </Container>
-                </Row>
-                <Container>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Row>
-                            <Col xs={5}>
-                                <Container>
-                                    <VistaPreviaImagen item={item} setValue={setValue} modoEdicion={modoEdicion} defaultImg={defaultEventos}/>
-                                </Container>        
-                            </Col>
-                            <Col xs={7}>
-                                <Container>
-                                    <div className='px-3 mx-2'>
-                                        <Row>
-                                            <Col xs={6}>
-                                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                    <Form.Label>Título de evento</Form.Label>
-                                                    <input type="text" className='form-control' placeholder='Título de evento' {...register("titulo")} required />
-                                                </Form.Group>
-                                            </Col>
-                                            <Col xs={6}>
-                                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                    <Form.Label>Organizador</Form.Label>
-                                                    <input type="text" className='form-control' placeholder='Organizador' {...register("organizador")} required />
-                                                </Form.Group>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={6}>
-                                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                    <Form.Label>Lugar</Form.Label>
-                                                    <input type="text" className='form-control' placeholder='Lugar' {...register("lugar")} required />
-                                                </Form.Group>
-                                            </Col>
-                                            <Col xs={6}>
-                                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                    <Form.Label>Fecha</Form.Label>
-                                                    <input  type="date" className='form-control' {...register("fecha")} required />
-                                                </Form.Group>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={6}>
-                                                <Form.Group >
-                                                    <Form.Label>Área</Form.Label>
-                                                    <select className="form-select" {...register("area")} required>
-                                                        <option value="1">Ingeniería en Computación</option>
-                                                        <option value="2">Matemáticas Aplicadas</option>
-                                                        <option value="3">Otro</option>
-                                                    </select>
-                                                </Form.Group>
-                                            </Col>
-                                        </Row>
+        <div className="flex justify-center min-w-[500px]">
+            {isLoading ? <Loading /> :
+                <main id="principalSeminario" className="w-[80%]">
+                    <header className='m-0 p-0 my-5'>
+                        <h2 className='text-center'>{id ? 'Editar' : 'Agregar'} Evento </h2>
+                    </header>
+    
+                    <section id="seminarioContainer" className="grid place-items-center grid-rows-auto">
+                        <form onSubmit={handleSubmit(onSubmit)}>
+    
+                            <article id="infoSection" className="grid grid-cols-1 md:grid-cols-2 pb-8">
+                                <figure id="imgDataSection" className="flex justify-center ">
+                                    <VistaPreviaImagen
+                                        item={item}
+                                        setValue={setValue}
+                                        modoEdicion={modoEdicion}
+                                        defaultImg={defaultEventos} />
+                                </figure>
+    
+    
+                                <aside id="infoDataSection" className="flex justify-center">
+                                    <div className='w-full p-4'>
+    
+                                        <p>Título de evento</p>
+                                        <input type="text" className={`w-full ${inputStyle} `} placeholder='Título de evento' {...register("titulo")} required />
+    
+                                        <p>Organizador</p>
+                                        <input type="text" className={`w-full ${inputStyle}`} placeholder='Organizador' {...register("organizador")} required />
+    
+    
+                                        <p>Lugar</p>
+                                        <input type="text" className={`w-full ${inputStyle}`} placeholder='Lugar' {...register("lugar")} required />
+    
+                                        <div className="grid grid-cols-2">
+    
+                                            <span>
+                                                <p >Fecha</p>
+                                                <input
+                                                    type="date"
+                                                    className={`${inputStyle} w-[90%]`}
+                                                    {...register("fecha")} required />
+                                            </span>
+    
+                                            <span>
+                                                <p  >Área</p>
+                                                <select
+                                                    className={`${inputStyle} w-[95%] p-3.5`}
+                                                    {...register("area")} required>
+                                                    <option value="1">Ingeniería en Computación</option>
+                                                    <option value="2">Matemáticas Aplicadas</option>
+                                                    <option value="3">Otro</option>
+                                                </select>
+                                            </span>
+                                        </div>
                                     </div>
-                                </Container>
-                            </Col>
-                        </Row>
-                        <Row className='px-5 my-3'>
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Label>Descripción</Form.Label>
-                                <textarea className='form-control' rows="5" type="text" placeholder="Descripción"  {...register("descripcion")} required/>
-                            </Form.Group>
-                        </Row>
-                        <Row className='px-5 mt-3 mb-5'>
-                            <Col>
-                                <Form.Check type="checkbox" label="Publicar en el Facebook del departamento" {...register("publicarFacebook")}/>
-                            </Col>
-                            <Col>              
-                                <Row className='justify-content-around align-items-end'>
-                                    <Col>
-                                        <div className='button-nav btn btn-secondary btn-lg' onClick={() => navigate('/eventos')}>Regresar</div>
-                                    </Col>
-                                    <Col>
-                                        <input type="submit" value={modoEdicion?'Actualizar':"Publicar"} className='button-submit btn-primary btn-lg'/>
-                                    </Col>
-                                </Row>      
-                            </Col>
-                        </Row>
-                    </form>
-                </Container>  
-            </Container>    
+                                </aside>
+                            </article>
+    
+    
+                            <aside className="flex justify-center ">
+                                <span className="w-[97%]">
+                                    <p>Descripción</p>
+                                    <textarea className={`${areaStyle} ${inputStyle}`} type="text" placeholder="Descripción"  {...register("descripcion")} required/>
+                                </span>
+                            </aside>
+    
+    
+    
+                            <aside className='grid grid-cols-[25%_75%] px-5 mt-3 mb-10 '>
+                                <span>
+                                    <Form.Check className="text-gray-900" type="checkbox" label="Publicar en el Facebook del departamento" {...register("publicarFacebook")} />
+                                </span>
+                                <span className="flex justify-end">
+                                    <button className={`bg-orange-400 hover:bg-orange-200 ${basicBtnStyle} m-3 w-full`} onClick={() => navigate('/eventos')}>Regresar</button>
+    
+                                    <input type="submit" value={modoEdicion ? 'Actualizar' : "Publicar"} className={`bg-blue-400 hover:bg-blue-200 ${basicBtnStyle} m-3 w-full`} />
+                                </span>
+    
+    
+                            </aside>
+    
+                        </form>
+                    </section>
+                </main>
             }
         </div>
     )
+    
 
 }
-
 
 const mapStateToProps = (state) =>{
     return{

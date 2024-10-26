@@ -11,6 +11,7 @@ import JefesDelDMAS from './pages/JefesDelDMAS';
 import Home from './pages/Home';
 import AcercaDe from './pages/AcercaDe';
 import QuinesSomos from './pages/quienesSomos';
+import Sugerencias from './pages/Sugerencias';
 
 
 // Categorias
@@ -21,7 +22,8 @@ import ProyectosInvestigacion from './pages/categories/ProyectosInvestigacion';
 import ProyectosTerminales from './pages/categories/ProyectosTerminales';
 import Publicaciones from './pages/categories/Publicaciones';
 
-
+// ver item
+import VerItem from './pages/categories/verItem';
 
 
 // rutas protegidas
@@ -54,10 +56,14 @@ function App() {
         {/* GlobalAuth maneja la validación global de autenticación */}
         <GlobalAuth>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home />}>
+            </Route> 
             <Route path="/jefesdeldmas" element={<JefesDelDMAS />} />
             <Route path='/acercade' element={<AcercaDe />} />
             <Route path='/quienessomos' element={<QuinesSomos />} />
+            <Route path='/sugerencias' element={<Sugerencias />} />
+            {/* FIXME: VerItem */}
+            <Route exact path='/ver/:categoria/:item' element={<VerItem/>}/>
 
 
             {/* Categorias */}

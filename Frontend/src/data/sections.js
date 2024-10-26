@@ -1,6 +1,3 @@
-//Background Section
-// import bgHeaderHome from '../assets/backgrounds/bgbanner.jpg';
-import bgHeaderSugerencias from '../assets/backgrounds/bgsugerencias.jpg';
 
 //Iconos Categorias
 import seminariosIcon from "../assets/icons/seminariosdepartamentales.png";
@@ -56,7 +53,7 @@ export const sections = [
     {
         id:5,
         title: 'Sugerencias',
-        bgHeader: bgHeaderSugerencias,
+        bgHeader: 'bg-sugerencias',
         desc: ['Envía tus sugerencias para ayudarnos a mejorar nuestro servicio. ¡Valoramos tu opinión!'],
         to: 'sugerencias'
     },
@@ -66,7 +63,7 @@ export const sections = [
 /**
  * Arreglo con la información para mostrar en las secciones del apartado categorias
  */
-export const categorias =[
+export const categorias = [
     {
         id: 1,
         title: "Seminarios Departamentales",

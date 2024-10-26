@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 
 import { FilterSection } from './Filters';
 import { GridContainer } from './Grid';
-import { Loading } from '../../elements/Loading';
+import { Loading } from '../../components/generalSections/Loading';
 import { ButtonNav } from '../../elements/Buttons';
 import { ProximoSeminario } from '../../pages/categories/protected/ProxSeminario';
 /**
@@ -36,9 +36,15 @@ export default function CategoriasBody({ categoria, loginState }) {
     console.log("arrMenu: "+arrMenu);
 
     useEffect(() => {
-        getProxSeminario();
-        getMenuData();
         getGridData();
+        getProxSeminario();
+        
+        const interval = setInterval(() => {
+            getMenuData();
+        }, 5 * 60 * 1000) // Cada 5 minutos
+
+        return () => clearInterval(interval)
+
     }, [categoria, getGridData, getMenuData, getProxSeminario])
 
     return (
@@ -52,7 +58,7 @@ export default function CategoriasBody({ categoria, loginState }) {
             {proxSeminario &&
                 <ProximoSeminario proxSeminario={proxSeminario}
                     loadingProxSeminario={loadingProxSeminario} />}
-            {arrMenu &&
+            {Array.isArray(arrMenu) &&
                 <FilterSection
                     loadingMenu={loadingMenu}
                     arrMenu={arrMenu}

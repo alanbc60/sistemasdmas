@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Formulario from '../../components/adminSections/Formulario';
-import Error from '../../components/adminSections/Error'
+import Formulario from '../../components/AdminSections/Formulario';
+import Error from '../../components/AdminSections/Error'
 import { agregarUsuario } from '../../hooks/useAdmin';
 import validator from 'validator';
 import { useState } from 'react';
@@ -61,8 +61,6 @@ function NuevoUsuario() {
 
         else
           setErrores(['El usuario ya existe']);
-        
-
       }
     } catch (error) {
       // Manejar los errores de validación aquí
@@ -83,7 +81,7 @@ function NuevoUsuario() {
 
       <div className="flex justify-end">
         <button
-          className="bg-orange-uam text-white px-3 py-1 font-bold uppercase border-none shadow-md transition duration-600 hover:bg-orange-300 hover:shadow-lg"
+          className="bg-orange-uam text-white px-3 py-1 font-bold uppercase border-none rounded-lg shadow-md transition duration-500 hover:bg-orange-300 hover:shadow-lg"
           onClick={() => navigate(-1)}
         >
           Volver

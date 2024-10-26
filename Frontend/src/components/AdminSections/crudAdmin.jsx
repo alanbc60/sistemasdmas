@@ -1,8 +1,8 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useState, useEffect, useCallback } from 'react';
-import Usuario from './Usuario';
+import React from 'react';
+import { useState, useEffect } from 'react';
+import Usuario from '../../components/AdminSections/Usuario';
 import { AdminLoader } from '../../hooks/useAdmin';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import toggleLogin from '../../redux/actions/toggleLogin';
 import { host } from '../../data/host';
@@ -10,38 +10,23 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
+//import { GridConteiner } from '../../../elements/Grid';
 
 function CrudAdmin(props) {
+  //const [setNoResultMessage] = useState('');
   const [usuarios, setUsuarios] = useState([]);
+  const [usuariosOriginal, setUsuariosOriginal] = useState([]);
   const [paginaActual, setPaginaActual] = useState(1);
   const registrosPorPagina = 5;
+  //const [logoutLoading, setLogoutLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Paginación
-  const records = usuarios.slice(
-    (paginaActual - 1) * registrosPorPagina, 
-    paginaActual * registrosPorPagina
-  );
-  const npages = Math.ceil(usuarios.length / registrosPorPagina);
-  const numbers = [...Array(npages + 1).keys()].slice(1);
-
-  // Configurar axios con credenciales
   axios.defaults.withCredentials = true;
 
-  // Cargar usuarios al montar el componente
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await AdminLoader();
-        setUsuarios(data);
-      } catch (error) {
-        console.error("Error al obtener los datos:", error);
-      }
-    };
-    fetchData();
-  }, []);
 
-  const goToHome = () => navigate("/");
+  const goToHome = () => {
+    navigate("/")
+  }
 
   const sessionBtn = () => {
     Swal.fire({
@@ -52,73 +37,122 @@ function CrudAdmin(props) {
       confirmButtonText: 'Sí',
       cancelButtonText: 'No',
     }).then(async (result) => {
-      if (result.isConfirmed && props.logged) {
-        try {
-          const response = await axios.post(`${host}:3001/post/logout`);
-          console.log(response.data);
-          props.toggleLogin(false);
-        } catch (error) {
-          console.error(error.message);
-        } finally {
-          goToHome();
+      if (result.isConfirmed) {
+        if (props.logged) {
+          console.log("entro a la validacion session encontrada");
+          try {       
+            const getLogout = async () => {
+              const response = await axios.post(host + ":3001/post/logout")
+              const result = response.data
+              console.log(result)
+              props.toggleLogin(false)
+            }
+            getLogout();
+    
+          } catch (error) {
+            console.log(error.message)
+          } finally {
+            //setLogoutLoading(false)
+            goToHome();
+          }
         }
       }
     });
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await AdminLoader();
+        setUsuarios(data);
+        setUsuariosOriginal([...data]); // Almacena una copia de la lista original
+      } catch (error) {
+        console.log("Error al obtener los datos:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    // Filtra la lista original cuando cambia usuariosOriginal
+    handleSearch({ target: { value: '' } });
+  }, [usuariosOriginal]);
+
+  const records = usuarios.slice((paginaActual - 1) * registrosPorPagina, paginaActual * registrosPorPagina);
+  const npages = Math.ceil(usuarios.length / registrosPorPagina);
+  const numbers = [...Array(npages + 1).keys()].slice(1);
+
+  const handlePrevClick = (e) => {
+    if (paginaActual > 1) {
+      e.preventDefault();
+      setPaginaActual(paginaActual - 1);
+    }
+
   };
 
-  // Búsqueda de usuarios
-  const handleSearch = useCallback((e) => {
+  const handlePageClick = (number, e) => {
+    e.preventDefault();
+    setPaginaActual(number);
+  };
+
+  const handleNextClick = (e) => {
+    if (paginaActual < npages) {
+      e.preventDefault();
+      setPaginaActual(paginaActual + 1);
+    }
+
+  };
+
+  const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
     setPaginaActual(1);
 
-    if (keyword) {
-      const results = usuarios.filter((usuario) =>
-        ['nombre', 'apaterno', 'amaterno', 'mail'].some((key) =>
-          usuario[key]?.toLowerCase().includes(keyword)
-        )
-      );
-      setUsuarios(results);
+    if (keyword !== '') {
+      const results = usuariosOriginal.filter((usuario) => {
+        const revisarPalabra = (prop) => prop && prop.toLowerCase().includes(keyword);
+        return (
+          revisarPalabra(usuario.nombre) ||
+          revisarPalabra(usuario.apaterno) ||
+          revisarPalabra(usuario.amaterno) ||
+          revisarPalabra(usuario.mail)
+        );
+      });
+
+      if (results.length > 0) {
+        setUsuarios(results);
+        //setNoResultMessage('');
+      } else {
+        console.log("No se encontraron resultados para '" + keyword + "'");
+        //setNoResultMessage(`No se encontraron resultados para '${keyword}'`);
+      }
     } else {
+      // Restablece a la lista original de usuarios almacenada
       console.log("No hay letras para buscar");
-      // Recargar usuarios en caso de que no haya búsqueda
-      const fetchData = async () => {
-        try {
-          const data = await AdminLoader();
-          setUsuarios(data);
-        } catch (error) {
-          console.error("Error al obtener los datos:", error);
-        }
-      };
-      fetchData();
+      setUsuarios([...usuariosOriginal]);
+      //setNoResultMessage('');
     }
-  }, [usuarios]);
-
-  // Manejo de la paginación
-  const handlePrevClick = () => {
-    if (paginaActual > 1) setPaginaActual(paginaActual - 1);
   };
 
-  const handlePageClick = (number) => setPaginaActual(number);
-
-  const handleNextClick = () => {
-    if (paginaActual < npages) setPaginaActual(paginaActual + 1);
-  };
+  const pagBtnStyle = 'py-1 px-2 border bg-orange-uam text-white rounded-md shadow-lg hover:shadow-md hover:bg-orange-400';
+  const inputStyle = 'bg-white w-full h-15 p-4 border border-[1px] border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors duration-500';
 
   return (
     <>
-      <div id="top-nav-adm" className="min-w-[500px]">
-        <div id="titulo-nav-container-adm" className="flex items-center justify-center">
-          <h1 className="font-black text-4xl text-orange-500 text-center z-1">
-            Usuarios DMAS
-          </h1>
+      <div id='top-nav-adm' className='min-w-[500px] grid md:grid-cols-[5fr_1fr] grid-cols-1 p-6'>
+
+        <div id='titulo-nav-container-adm' className='flex justify-center py-2'>
+          <h1 className="font-black text-4xl text-orange-500 text-center z-1">Usuarios DMAS</h1>
         </div>
 
-        <div id="session-nav-container-adm" className="flex justify-center">
-          <button className="session-btn-adm" onClick={sessionBtn}>
-            <span>Cerrar sesión </span>
+
+        <div id='session-nav-container-adm' className='p-2 flex justify-center' >
+          <button className='min-w-[150px] p-2 text-orange-500 font-bold rounded-2xl hover:shadow-sm hover:text-gray-400 transition-all duration-500' onClick={sessionBtn}>
+            <span >Cerrar sesión </span>
             <FontAwesomeIcon icon={faCircleUser} />
           </button>
         </div>
+
       </div>
 
       {usuarios.length ? (
@@ -127,66 +161,52 @@ function CrudAdmin(props) {
             <input
               type="text"
               placeholder="Buscar usuario"
-              className="w-full p-2 mt-5 rounded-md border-2 transition duration-300 ease-in-out bg-white focus:border-blue-500 focus:outline-none"
+              className={`${inputStyle}`}
               onChange={handleSearch}
-              style={{
-                borderRadius: '10px',
-                border: '3px solid rgba(255, 255, 255, 0.3)',
-                boxShadow:
-                  '2px 2px 2px rgba(0, 0, 0, 0.08), -3px -2px 3px rgba(255, 255, 255, 0.2), 2px 2px 2px rgba(0, 0, 0, 0.08) inset',
-              }}
             />
           </div>
 
-          <table className="w-full bg-white shadow mt-5 table-auto">
-            <thead className="bg-orange-uam text-white">
+
+          <table className='w-full bg-white shadow mt-5 table-auto'>
+            <thead className='bg-orange-uam text-white'>
               <tr>
-                <th className="p-2">ID</th>
-                <th className="p-2">Nombre</th>
-                <th className="p-2">Apellido Paterno</th>
-                <th className="p-2">Apellido Materno</th>
-                <th className="p-2">Correo</th>
-                <th className="p-2">Password</th>
-                <th className="p-2">Acciones</th>
+                <th className='p-2'>ID</th>
+                <th className='p-2'>Nombre</th>
+                <th className='p-2'>Apellido Paterno</th>
+                <th className='p-2'>Apellido Materno</th>
+                <th className='p-2'>correo</th>
+                <th className='p-2'>Password</th>
+                <th className='p-2'>Acciones</th>
               </tr>
             </thead>
+
             <tbody>
-              {records.map((usuario) => (
-                <Usuario key={usuario.idusuario} usuario={usuario} />
+              {records.map(usuario => (
+                <Usuario
+                  usuario={usuario}
+                  key={usuario.idusuario}
+                />
               ))}
             </tbody>
           </table>
 
-          <nav className="mt-10 lg:flex lg:justify-between">
-            <ul className="flex items-center">
-              <li className="mr-2 page-item">
-                <button
-                  className="p-1 px-2 border bg-orange-uam text-white rounded-md shadow-md hover:bg-orange-400"
-                  onClick={handlePrevClick}
-                >
-                  Anterior
-                </button>
+          <nav className='mt-10 flex justify-between w-full'>
+            <ul className='flex'>
+              <li className="pr-1">
+                <button className={`${pagBtnStyle}`} onClick={handlePrevClick}>Anterior</button>
               </li>
-              {numbers.map((number) => (
-                <li
-                  className={paginaActual === number ? 'page-item active' : 'page-item'}
-                  key={number}
-                >
+              {numbers.map(number => (
+                <li className={paginaActual === number ? 'page-item active px-1' : 'page-item'} key={number}>
                   <button
-                    className="p-1 px-2 border bg-orange-uam text-white rounded-md shadow-md hover:bg-orange-400"
-                    onClick={() => handlePageClick(number)}
+                    className={`${pagBtnStyle}`}
+                    onClick={(e) => handlePageClick(number, e)}
                   >
                     {number}
                   </button>
                 </li>
               ))}
-              <li>
-                <button
-                  className="p-1 px-2 border bg-orange-uam text-white rounded-md shadow-md hover:bg-orange-400"
-                  onClick={handleNextClick}
-                >
-                  Siguiente
-                </button>
+              <li className="pl-1">
+                <button className={`${pagBtnStyle}`} onClick={handleNextClick}>Siguiente</button>
               </li>
             </ul>
           </nav>
@@ -198,11 +218,15 @@ function CrudAdmin(props) {
   );
 }
 
-const mapStateToProps = (state) => ({
-  logged: state.logged,
-});
+const mapStateToProps = (state) => {
+  return {
+    logged: state.logged,
+  };
+};
 
-const mapDispatchToProps = { toggleLogin };
+const mapDispatchToProps = {
+  toggleLogin,
+};
 
-const ConnectedCrudAdmin = connect(mapStateToProps, mapDispatchToProps)(CrudAdmin);
-export default ConnectedCrudAdmin;
+export default connect(mapStateToProps, mapDispatchToProps)(CrudAdmin);
+//export default CrudAdmin;

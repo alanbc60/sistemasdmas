@@ -9,7 +9,7 @@ import { host } from '../../data/host';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faEye, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from 'react';
-import { ShortLoading } from '../../elements/Loading';
+import { ShortLoading } from '../../components/generalSections/Loading';
 import toggleLogin from '../../redux/actions/toggleLogin';
 import { useDispatch } from 'react-redux';
 

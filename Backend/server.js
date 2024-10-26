@@ -644,7 +644,7 @@ app.get('/get/seminarios/seminario-edit', function(req, res){
 });
 
 
-app.get('/get/seminarios/expositores', function(req, res){
+app.get('/get/seminarios/expositores', function(_req, res){
     poolDB.getConnection((err,conn)=>{
         if(err){
             res.send("error");
@@ -2335,6 +2335,19 @@ app.delete('/delete/lineamientosproc/item', function (req, res) {
     })
 })
 
+
+const getYoutubeVideoId = (url) => {
+    var ID = '';
+    url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+    if (url[2] !== undefined) {
+        ID = url[2].split(/[^0-9a-z_-]/i);
+        ID = ID[0];
+    }
+    else {
+        ID = url;
+    }
+    return ID;
+}
 
 
 

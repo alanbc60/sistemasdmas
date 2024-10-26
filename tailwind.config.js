@@ -10,6 +10,7 @@ export default {
         'quienesomos': "url('./Frontend/src/assets/backgrounds/bgquienesomos.jpg')",
         'jefesdeldmas': "url('./Frontend/src/assets/backgrounds/bgjefes.png')",
         'fondologin': "url('./Frontend/src/assets/backgrounds/endless-constellation.svg')",
+        'sugerencias': "url('./Frontend/src/assets/backgrounds/bgsugerencias.jpg')",
 
         'seminarios': "url('./Frontend/src/assets/backgrounds/bgseminario.jpg')",
         'eventos': "url('./Frontend/src/assets/backgrounds/bgeventos.jpg')",
@@ -17,13 +18,11 @@ export default {
         'proyectosinvestigacion': "url('./Frontend/src/assets/backgrounds/bgproyectoinvestigacion.jpg')",
         'proyectosterminales': "url('./Frontend/src/assets/backgrounds/bgproyectoterminal.jpg')",
         'publicaciones': "url('./Frontend/src/assets/backgrounds/bgpublicaciones.jpg')",
-      
-
-
       },
       colors: {
         'orange-uam': '#F08200',
-        'jefesheader':'#ffe284'
+        'jefesheader':'#ffe284',
+        'button-submit': '#00C3DB',
         // submitBtn: 'var(--submit-btn)',
       },
       screens: {

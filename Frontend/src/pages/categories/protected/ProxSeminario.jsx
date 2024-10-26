@@ -3,7 +3,7 @@ import NoResults from '../../../elements/NoResults';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { ButtonLink } from '../../../elements/Buttons';
-import { ShortLoading } from '../../../elements/Loading';
+import { ShortLoading } from '../../../components/generalSections/Loading';
 
 /**
  * Componente que muestra un próximo seminario en forma de tarjeta.
@@ -60,7 +60,7 @@ export const ProximoSeminario = ({ proxSeminario, loadingProxSeminario }) => {
 
                 <div className="mt-6">
                   <ButtonLink
-                    label="Ver en YouTube"
+                    label="en YouTube"
                     path={proxSeminario.youtube}
                     className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full w-full md:w-auto"
                   />
