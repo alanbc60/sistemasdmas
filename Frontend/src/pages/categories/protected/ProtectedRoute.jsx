@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 import toggleLogin from '../../redux/actions/toggleLogin';
-import { useEffect } from 'react';
+import { React, useEffect } from 'react';
 import axios from 'axios';
 import { host } from '../../data/host';
 /**

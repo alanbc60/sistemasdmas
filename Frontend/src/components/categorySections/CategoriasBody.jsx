@@ -1,14 +1,11 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react'
 import PropTypes from 'prop-types';
-
 import { useCategoriasMenu, useCategoriasGrid } from '../../hooks/useCategorias';
 import { useEffect } from 'react';
-
-
 import { FilterSection } from './Filters';
 import { GridContainer } from './Grid';
-import { Loading } from '../../components/generalSections/Loading';
+import { Loading } from '../generalSections/Loading';
 import { ButtonNav } from '../../elements/Buttons';
 import { ProximoSeminario } from '../../pages/categories/protected/ProxSeminario';
 /**
@@ -36,15 +33,9 @@ export default function CategoriasBody({ categoria, loginState }) {
     console.log("arrMenu: "+arrMenu);
 
     useEffect(() => {
-        getGridData();
         getProxSeminario();
-        
-        const interval = setInterval(() => {
-            getMenuData();
-        }, 5 * 60 * 1000) // Cada 5 minutos
-
-        return () => clearInterval(interval)
-
+        getMenuData();
+        getGridData();
     }, [categoria, getGridData, getMenuData, getProxSeminario])
 
     return (
@@ -58,7 +49,7 @@ export default function CategoriasBody({ categoria, loginState }) {
             {proxSeminario &&
                 <ProximoSeminario proxSeminario={proxSeminario}
                     loadingProxSeminario={loadingProxSeminario} />}
-            {Array.isArray(arrMenu) &&
+            {arrMenu &&
                 <FilterSection
                     loadingMenu={loadingMenu}
                     arrMenu={arrMenu}

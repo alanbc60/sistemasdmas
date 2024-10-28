@@ -55,4 +55,3 @@ LightboxImagen.propTypes = {
     lightboxItem: PropTypes.object,
     updateState: PropTypes.func.isRequired
 }
-

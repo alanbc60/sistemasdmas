@@ -15,7 +15,7 @@ function Eventos() {
     <>  
       <Header/>
       <HeaderSection layoutData={layoutData}/>
-      <CategoriasBody categoria='publicaciones' loginState={loggedState}/>
+      <CategoriasBody categoria='eventos' loginState={loggedState}/>
       <Footer/> 
     </>
   

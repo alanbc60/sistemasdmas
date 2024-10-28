@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { Outlet, Link, useLocation } from "react-router-dom"
 import toggleLogin from '../../redux/actions/toggleLogin';
@@ -12,59 +13,68 @@ function InicioAdmin() {
   const location = useLocation();
 
   return (
-    <div className="flex h-screen">
-      {/* Menú lateral */}
-      <aside className="w-2/12 bg-orange-500 py-5 text-white relative">
-        <div className="flex flex-col items-center justify-center">
-          <img src={LogoUsuario} alt="Casa Abierta al Tiempo" className="h-24" />
-          <h2 className="text-xl mt-4">ADMINISTRADOR</h2>
-        </div>
+    <div className="md:flex md:min-h-screen">
+      <aside className="md:w-2/12 md:grid min-w-[330px] md:h-screen bg-orange-uam px-2 py-5">
+        <div className="grid grid-cols-1 md:grid-rows-2 place-items-center ">
+          <div className='grid place-items-center'>
+            <img
+              src={LogoUsuario}
+              alt="Icono Usuario"
+              className='h-[150px] '
+            />
+            <h2
+              className="text-2xl font-black text-white">
+              ADMINISTRADOR
+            </h2>
 
-        <nav className="mt-10">
-          <Link
-            className={`text-xl block mb-4 ${
-              location.pathname === '/admin' ? 'text-gray-400' : 'text-white'
-            } hover:text-gray-500`}
-            to="/admin"
-          >
-            <FontAwesomeIcon icon={faUsersGear} className="px-2" />
-            Lista de usuarios
-          </Link>
+            <nav>
+              {/* si la ruta es "/" se le asigna el color blue-300, si no se le asigna el color white */}
+              <Link
+                className={`${location.pathname === '/admin' ? 'text-gray-400' : 'text-white'} text-xl block mb-4 mt-5 hover:text-gray-500 `}
+                to="/admin"
+              >
+                <FontAwesomeIcon icon={faUsersGear} className="px-2" />
+                Lista de usuarios
+              </Link>
+              <Link
+                className={`${location.pathname === '/admin/usuarios/nuevoUsuario' ? 'text-gray-400' : 'text-white'} text-xl block mb-4 hover:text-gray-500 `}
+                to="/admin/usuarios/nuevoUsuario"
+              >
+                <FontAwesomeIcon icon={faUserPlus} className="px-2 " />
+                Nuevo Usuario
+              </Link>
 
-          <Link
-            className={`text-xl block mb-4 ${
-              location.pathname === '/admin/usuarios/nuevoUsuario' ? 'text-gray-400' : 'text-white'
-            } hover:text-gray-500`}
-            to="/admin/usuarios/nuevoUsuario"
-          >
-            <FontAwesomeIcon icon={faUserPlus} className="px-2" />
-            Nuevo Usuario
-          </Link>
+              {/* Cerrar sesión */}
+              <Link
+                className={`${location.pathname === '/admin/regresar' ? 'text-gray-400' : 'text-white'} text-xl block mb-5 hover:text-gray-500 `}
+                to="/"
+              >
+                <FontAwesomeIcon icon={faCircleLeft} className="px-2" />
+                Regresar al home
+              </Link>
+            </nav>
+          </div>
 
-          <Link
-            className={`text-xl block mb-5 ${
-              location.pathname === '/admin/regresar' ? 'text-gray-400' : 'text-white'
-            } hover:text-gray-500`}
-            to="/"
-          >
-            <FontAwesomeIcon icon={faCircleLeft} className="px-2" />
-            Regresar al home
-          </Link>
-        </nav>
+          <div className='flex flex-col absolute bottom-10 items-center medio:flex'>
+            <img
+              src={LogoUAM}
+              alt="Casa Abierta al Tiempo"
+              className="max-h-[60px] w-auto"
+            />
+          </div>
 
-        <div className="absolute bottom-5 left-5">
-          <img src={LogoUAM} alt="Casa Abierta al Tiempo" className="h-12" />
         </div>
       </aside>
 
-      {/* Contenido Principal */}
-      <main className="w-10/12 bg-gray-100 overflow-scroll">
+
+
+      <main className="md:w-10/12 bg-gray-100 md:h-screen overflow-scroll ">
+        {/* cuando el usuario va a "/usuarios/nuevoUsuario", se renderizará el componente asociado con esa ruta dentro del Outlet. */}
         <Outlet />
       </main>
     </div>
   );
 }
-
 
 
 const mapStateToProps = (state) => {

@@ -19,16 +19,11 @@ import defaultDocumento from '../assets/defaultimages/defaultDocumento.png'
 
 export const useVerItem = (categoria, item)=>{
 
-    console.log("==== useVerItem ====")
-    console.log(categoria)
-    console.log(item)
-
     const [data, setData] = useState(null);
     const [loadingVer, setLoadingVer] = useState(false);
     
     const buildURL = useMemo(()=>{
         if (categoria === 'seminarios') {
-            console.log(host+`:3001/get/seminarios/seminario-item`);
             return host+`:3001/get/seminarios/seminario-item`;
         } else if (categoria === 'lineamientosproc') {
             return host+`:3001/get/lineamientosproc/lineamientoproc-item`
@@ -178,10 +173,8 @@ export const useCategoriasMenu = (categoria)=>{
             console.log(host+`:3001/get/seminarios/expositores`);
             try {
                 setMenuLoading(true);     
-                console.log("Haciendo la solicitud de expositores.....");
                 const response = await axios.get(host+`:3001/get/seminarios/expositores`);
                 const result = response.data;
-                console.log("resultado expositores: "+result)
                 // verificar si result es un array
                 if (Array.isArray(result)) {
                     console.log("arrMenu es un array");
@@ -191,11 +184,9 @@ export const useCategoriasMenu = (categoria)=>{
                 setFiltrarPorLabel('Expositor/a')
                 setMostrarArea(true)
                 setArrOrdenarPor(filterDate2)    
-            } 
-            catch (error) {
+            } catch (error) {
                 console.log('Error al obtener expositores: '+error.message)
-            }
-            finally{
+            }finally{
                 setMenuLoading(false)
             }
         } else if (categoria === 'proyectosinvestigacion') {

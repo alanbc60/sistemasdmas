@@ -62,7 +62,6 @@ function App() {
             <Route path='/acercade' element={<AcercaDe />} />
             <Route path='/quienessomos' element={<QuinesSomos />} />
             <Route path='/sugerencias' element={<Sugerencias />} />
-            {/* FIXME: VerItem */}
             <Route exact path='/ver/:categoria/:item' element={<VerItem/>}/>
 
 

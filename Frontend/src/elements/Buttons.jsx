@@ -9,8 +9,22 @@ import { useNavigate } from 'react-router-dom';
  *  texto para mostrar en el botón
  * @returns botón tipo submit
  */
+export function SubmitInput({value}) {
+  return (
+    <input type="submit" value={value} className="border border-orange-500 text-orange-500 px-4 py-2 rounded "/>
+  )
+}
+SubmitInput.propTypes = {
+    value: PropTypes.string.isRequired,
+}
 
-
+/**
+ * 
+ * @param {string} 
+ * label: texto para mostrar en el botón
+ * path: dirección a la cual redireccional 
+ * @returns botón que sirve para navegar internamente
+ */
 export function ButtonNav({label, path}) {
     const navigate = useNavigate();
     return (

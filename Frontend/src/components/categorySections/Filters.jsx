@@ -1,7 +1,8 @@
 import Select from 'react-select';
 import filterSubject from '../../data/dropdownSubject.json';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { SubmitInput } from '../../elements/Buttons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 

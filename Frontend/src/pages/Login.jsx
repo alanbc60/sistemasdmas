@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect } from 'react';
 import LogoUAMsvg from '../assets/logos/uamlogo.svg';
-import FormLogin from '../components/login/formLogin';
+import FormLogin from '../components/login/FormLogin';
 
 /**
  * 

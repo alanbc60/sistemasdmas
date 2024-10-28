@@ -28,7 +28,7 @@ export default function HeaderSection({ layoutData }) {
     
 
     return (
-        <header id='section-header' className="flex flex-col items-center relative w-full mb-[24px] min-w-[500px]">
+        <header id='section-header' className="flex flex-col items-center relative w-full mb-[24px] min-w-[500px] ">
             <div id="bg-header"
                 className={`relative ${title === 'Jefes del DMAS' 
                     ? `${jefesdmasSVG} ${jefesdeldmasColor}` 
@@ -43,7 +43,7 @@ export default function HeaderSection({ layoutData }) {
 
             {!['Inicio', 'Jefes del DMAS'].includes(title) && (
                 <div className="flex flex-col gap-4 w-[80%] items-center p-4 mt-4">
-                    <h1 className="text-4xl font-bold">{title}</h1>
+                    <h2 className="text-xl font-semibold">{title}</h2>
                     {desc && desc.map((item, index) => (
                         <p key={index} className="mt-2 text-gray-600">{item}</p>
                     ))}

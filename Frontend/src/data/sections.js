@@ -1,4 +1,3 @@
-
 //Iconos Categorias
 import seminariosIcon from "../assets/icons/seminariosdepartamentales.png";
 import proyectosInvestigacionIcon from "../assets/icons/proyectosinvestigacion.png";
@@ -63,7 +62,7 @@ export const sections = [
 /**
  * Arreglo con la información para mostrar en las secciones del apartado categorias
  */
-export const categorias = [
+export const categorias =[
     {
         id: 1,
         title: "Seminarios Departamentales",

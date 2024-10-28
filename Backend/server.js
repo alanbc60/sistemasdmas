@@ -362,7 +362,6 @@ app.get("/obtenerUsuarioEspecifico/:idUsuario", (req, res) => {
 });
 
 
-
 app.post("/registrarUsuario", (req, res) => {
   const sql = "INSERT INTO usuarios (nombre,apaterno,amaterno,mail, password) VALUES (?, ?, ?, ?, ?)";
 
@@ -527,7 +526,6 @@ app.get('/get/seminarios', function(req, res){
     });
 });
 
-
 app.get('/get/seminarios/mas-lejano-primero', function(req, res){
     poolDB.getConnection((err,conn)=>{
         if(err){
@@ -545,7 +543,6 @@ app.get('/get/seminarios/mas-lejano-primero', function(req, res){
     });
 });
 
-
 app.get('/get/seminarios/mas-proximo', function(req, res){
     poolDB.getConnection((err,conn)=>{
         if(err){
@@ -562,7 +559,6 @@ app.get('/get/seminarios/mas-proximo', function(req, res){
         conn.release();    
     });
 });
-
 
 app.get('/get/seminarios/filtrar', function(req, res){
     const busqueda = req.query.busqueda;
@@ -589,7 +585,6 @@ app.get('/get/seminarios/filtrar', function(req, res){
     });    
     
 });
-
 
 app.get('/get/seminarios/seminario-item', function(req, res){
     const id = req.query.id;
@@ -619,7 +614,6 @@ app.get('/get/seminarios/seminario-item', function(req, res){
     
 });
 
-
 app.get('/get/seminarios/seminario-edit', function(req, res){
     const id = req.query.id;
     poolDB.getConnection((err,conn)=>{
@@ -643,7 +637,6 @@ app.get('/get/seminarios/seminario-edit', function(req, res){
     
 });
 
-
 app.get('/get/seminarios/expositores', function(_req, res){
     poolDB.getConnection((err,conn)=>{
         if(err){
@@ -662,7 +655,7 @@ app.get('/get/seminarios/expositores', function(_req, res){
     
 });
 
-
+// Agregar nuevo seminario
 app.post('/post/seminarios/',uploadSeminarios.single("imagen"), (req, res) =>{
     const titulo = req.body.titulo;
     const expositor = req.body.expositor;
@@ -675,7 +668,6 @@ app.post('/post/seminarios/',uploadSeminarios.single("imagen"), (req, res) =>{
     console.log("Se solicita agregar un seminario.")
     const host = hostApi+"/seminarios/";
     const imagenRuta = req.file ? host + path.basename(req.file.path) : ''
-
 
     var sql = "INSERT INTO seminarios (titulo, resumen, expositor, semblanza, fecha, area, imagen, youtube, idusuario) VALUES ?";
     var values = [
