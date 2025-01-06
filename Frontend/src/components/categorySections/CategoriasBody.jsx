@@ -36,7 +36,15 @@ export default function CategoriasBody({ categoria, loginState }) {
         getProxSeminario();
         getMenuData();
         getGridData();
-    }, [categoria, getGridData, getMenuData, getProxSeminario])
+      
+        const interval = setInterval(() => {
+          getProxSeminario();
+          getMenuData();
+          getGridData();
+        }, 3 * 60 * 1000); // Cada 3 minutos
+      
+        return () => clearInterval(interval);
+      }, [categoria, getGridData, getMenuData, getProxSeminario]);
 
     return (
         <section id='categorias-content'>
@@ -49,7 +57,7 @@ export default function CategoriasBody({ categoria, loginState }) {
             {proxSeminario &&
                 <ProximoSeminario proxSeminario={proxSeminario}
                     loadingProxSeminario={loadingProxSeminario} />}
-            {arrMenu &&
+            {Array.isArray(arrMenu) &&
                 <FilterSection
                     loadingMenu={loadingMenu}
                     arrMenu={arrMenu}
@@ -59,7 +67,8 @@ export default function CategoriasBody({ categoria, loginState }) {
                     mostrarArea={mostrarArea}
                     arrOrdenarPor={arrOrdenarPor}
                     getFiltered={getFilteredGridData}
-                />}
+                />
+            }
             {loadingArrGrid ? <Loading /> :
                 <GridContainer
                     arrGrid={arrGrid}
